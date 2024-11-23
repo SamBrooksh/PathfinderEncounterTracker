@@ -1,0 +1,4 @@
+drow1:
+    Name: Drow Warrior
+    CR: 10
+    

@@ -1,0 +1,28 @@
+CR: Int : Const 
+Name: String : Const 
+Stats: Dictionary : Button - Display
+    STR: Int : Const 
+    INT: Int : Const 
+    WIS: Int : Const 
+    DEX: Int : Const
+    CHA: Int : Const
+    CON:Int : Const
+    Reflex: Int : Const 
+    Fortitude: Int : Const 
+    Wisdom: Int : Const 
+MaxHp: Int : Const
+CurrentHp: Int : Modifiable
+Notes: String : Const : Button - Display
+Description: String : Const : Button - Display
+
+Attack: Object : Callable 
+    Weapon: String : Const
+    MeleeRanged: Set(Melee, Ranged) : Const 
+    Range: Int : Const 
+    Type: Set(Bludgeoning, Piercing, Slashing) : Const 
+    DamageRoll: Object : Callable - None 
+    AC: Int : Const 
+
+ArmyKills: Object : Callable - None  
+    Bonus: Int : Const 
+    BaseDamageMultiplier: Int : Const 
