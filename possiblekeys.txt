@@ -17,9 +17,9 @@ Description: String : Const : Button - Display
 
 Attack: Object : Callable 
     Weapon: String : Const
-    MeleeRanged: Set(Melee, Ranged) : Const 
+    MeleeRanged: Enum - Melee - Ranged : Const 
     Range: Int : Const 
-    Type: Set(Bludgeoning, Piercing, Slashing) : Const 
+    Type: Enum -Bludgeoning- Piercing- Slashing : Const 
     DamageRoll: Object : Callable - None 
     AC: Int : Const 
 
