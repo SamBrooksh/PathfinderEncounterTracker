@@ -23,12 +23,20 @@ class DamageType:
                 raise KeyError
         else:
             self.d_type = default
-    def __call__(self, *args: Any, **kwds: Any) -> tuple[int, Enum]:
+
+    def __str__(self) -> str:
+        return f"{self.amount} : {self.d_type}"
+
+    def __call__(self, *args: Any, **kwds: Any) -> tuple[list[int], Enum]:
         if 'd' in self.amount:
-            pass
+            rolls = []
+            nDice, nDieRoll = self.amount.split('d')
+            for _ in range(nDice):
+                rolls.append(randint(1, nDieRoll+1))
+            return rolls, self.d_type 
             #Roll then give result
         else:
-            return int(self.amount), self.d_type
+            return [int(self.amount)], self.d_type
 
 
 def register(cls):
@@ -40,20 +48,25 @@ class BaseObject(ABC):
         pass
 class DictObject(BaseObject):
     def __init__(self, start_dict: dict) -> None:
-        self.dict_object = start_dict
+        self.dict_object = start_dict[0]
 
 @register
 class AttackObject(DictObject):
     def __init__(self, start_dict: dict):
         super().__init__(start_dict)
         print("Making Attack Object")
-        self.dict_object = start_dict
 
     def __call__(self, *args: Any, **kwds: Any) -> tuple[int, list[DamageType]]:
         #Returns the roll, and the damage if hit - the breakdown
         if 'DamageRoll' in self.dict_object and 'BaseType' in self.dict_object:
             return self.dict_object['DamageRoll'](self.dict_object['BaseType'])
         return super().__call__(*args, **kwds)
+    
+    def __str__(self) -> str:
+        return str(self.dict_object)
+    
+    def __repr__(self) -> str:
+        return repr(self.dict_object)
 
 @register
 class DamageRollObject(BaseObject):
@@ -71,9 +84,11 @@ class DamageRollObject(BaseObject):
     
     def __str__(self) -> str:
         string = f"<Damage Roll Object: Rolls: "
-        for rolls in range(len(self.count)):
-            string += f'{self.count[rolls]}d{self.die} '
-        string += f'Bonus: {self.bonus}>'
+        for rolls in range(len(self._damage_rolls)):
+            string += str(self._damage_rolls[rolls]) + ', '
+        string = string[:-2]
+        string += '>'
+        return string
 
     def __repr__(self) -> str:
         return str(self)        
@@ -218,7 +233,10 @@ def build_tree(file:str="samplefile.txt")->dict:
                 
 
 def main():
-    pp(build_tree())
+    sampletree = build_tree() 
+    pp(sampletree)
+    #print(sampletree['drow1']['Attack'].dict_object)
+    
 
 if __name__ == "__main__":
     main()
