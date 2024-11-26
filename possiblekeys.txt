@@ -20,8 +20,12 @@ Attack: Object : Callable
     Weapon: String : Const
     MeleeRanged: Enum - Melee - Ranged - Magic : Const 
     Range: Int : Const 
-    Type: Enum -Bludgeoning- Piercing- Slashing-Magic : Const 
+    BaseType: Enum -Bludgeoning- Piercing- Slashing-Magic : Const 
+    AttackBonus: Int: Const
     DamageRoll: Object : Callable - None 
+        Value: String: Const
+        DamageType: Enum - Bludgeoning- Piercing- Slashing - Magic - Fire - Cold - Electricity - Acid
+    Description: String : Const : Button - Display
 AC: Int : Const 
 
 ArmyKills: Object : Callable - None  
