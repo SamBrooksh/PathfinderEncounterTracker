@@ -11,24 +11,25 @@ def get_spacing(string: str) -> int:
             return x
     return x
 
-def load_keys(file="possiblekeys.txt"):
+def load_keys(file:str="possiblekeys.txt"):
     details = {}
     with open (file, 'r') as fin:
-        spacing = 0
+        spacing = [0]
         previous_item = []
         temp_holder = None 
         for line in fin:
             if line.isspace():
                 continue
             # Make it able to have multiple levels
-            if get_spacing(line) > spacing: #New Level
-                spacing = get_spacing(line)
+            if get_spacing(line) > spacing[-1]: #New Level
+                spacing.append(get_spacing(line))
                 previous_item.append(temp_holder)
-            elif get_spacing(line) < spacing: # Remove level
+            while get_spacing(line) < spacing[-1]: # Remove level
                 #Has current error, where need to allow multiple tabs being removed
                 details[previous_item[-1]['KEY']] = previous_item[-1]
                 previous_item.pop()
-                spacing = get_spacing(line)
+                spacing.pop()
+                #spacing = get_spacing(line)
             
             key_detail = {}
             terms = line.split(':')

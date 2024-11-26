@@ -1,4 +1,45 @@
 drow1:
     Name: Drow Warrior
     CR: 10
+    Alliance: Friendly
+    Stats:
+        INT: 10
+        WIS: 10
+        CHA: 10
+        STR: 10
+        CON: 10
+        DEX: 10
+        Fortitude: 10
+        Will: 10
+        Reflex: 10
+    MaxHp: 100
+    CurrentHp: 100
+    AC: 15
+    Attack:
+        Weapon: Sword
+        MeleeRanged: Melee
+        Type: Slashing
+        DamageRoll: 1d6+STR
+
+drow2:
+    Name: Drow Warrior
+    CR: 10
+    Stats:
+        INT: 10
+        WIS: 10
+        CHA: 10
+        STR: 10
+        CON: 10
+        DEX: 10
+        Fortitude: 10
+        Will: 10
+        Reflex: 10
+    MaxHp: 100
+    CurrentHp: 100
+    AC: 30
+    Attack:
+        Weapon: Sword
+        MeleeRanged: Melee
+        Type: Slashing
+        DamageRoll: 1d6+STR
     

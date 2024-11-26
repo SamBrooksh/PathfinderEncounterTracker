@@ -1,5 +1,6 @@
 CR: Int : Const 
 Name: String : Const 
+Alliance: Enum - Hostile - Friendly - Neutral : Const 
 Stats: Dictionary : Button - Display
     STR: Int : Const 
     INT: Int : Const 
@@ -9,7 +10,7 @@ Stats: Dictionary : Button - Display
     CON:Int : Const
     Reflex: Int : Const 
     Fortitude: Int : Const 
-    Wisdom: Int : Const 
+    Will: Int : Const 
 MaxHp: Int : Const
 CurrentHp: Int : Modifiable
 Notes: String : Const : Button - Display
@@ -17,11 +18,11 @@ Description: String : Const : Button - Display
 
 Attack: Object : Callable 
     Weapon: String : Const
-    MeleeRanged: Enum - Melee - Ranged : Const 
+    MeleeRanged: Enum - Melee - Ranged - Magic : Const 
     Range: Int : Const 
-    Type: Enum -Bludgeoning- Piercing- Slashing : Const 
+    Type: Enum -Bludgeoning- Piercing- Slashing-Magic : Const 
     DamageRoll: Object : Callable - None 
-    AC: Int : Const 
+AC: Int : Const 
 
 ArmyKills: Object : Callable - None  
     Bonus: Int : Const 
