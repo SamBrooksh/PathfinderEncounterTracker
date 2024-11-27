@@ -43,6 +43,6 @@ drow2:
         MeleeRanged: Melee
         BaseType: Slashing
         DamageRoll: 
-            Value: 5d6+2+.Stats.STR+-2+3d6
+            Value: 5d6+2+.Stats.STR+-2#Fire+3d6#Cold
         AttackBonus: 12
     

@@ -23,7 +23,11 @@ class DamageType:
                 raise KeyError
         else:
             self.d_type = default
-
+    def to_file(self)->str:
+        temp = ""
+        if self.d_type is not None:
+            temp = '#' + self.d_type.value
+        return str(self.amount) + temp
     def __str__(self) -> str:
         return f"{self.amount} : {self.d_type}"
 
@@ -48,6 +52,8 @@ def register(cls):
 class BaseObject(ABC):
     def __call__(self, *args: Any, **kwds: Any) -> Any:
         pass
+    def to_file(space_start: int)->str:
+        pass
 class DictObject(BaseObject):
     def __init__(self, start_dict: dict) -> None:
         self.dict_object = start_dict[0]
@@ -64,6 +70,8 @@ class AttackObject(DictObject):
         if 'DamageRoll' not in self.dict_object:
             self.dict_object['DamageRoll'] = DamageRollObject("1d4")
 
+    def to_file(space_start: int)->str:
+        pass
 
     def __call__(self, *args: Any, **kwds: Any) -> tuple[int, list[DamageType]]:
         #Returns the roll, and the damage if hit - the breakdown

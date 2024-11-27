@@ -1,0 +1,13 @@
+drow1:
+    Name:Drow Warrior
+    CR:10
+    Alliance:Friendly
+    MaxHp:100
+    CurrentHp:100
+    AC:15
+drow2:
+    Name:Drow Warrior
+    CR:10
+    MaxHp:100
+    CurrentHp:100
+    AC:30
