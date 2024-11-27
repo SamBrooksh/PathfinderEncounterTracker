@@ -11,12 +11,13 @@ Stats: Dictionary : Button - Display
     Reflex: Int : Const 
     Fortitude: Int : Const 
     Will: Int : Const 
-MaxHp: Int : Const
+MaxHp: Int : Const :REQUIRED
 CurrentHp: Int : Modifiable
 Notes: String : Const : Button - Display
 Description: String : Const : Button - Display
+Gear: List : Modifiable
 
-Attack: Object : Callable 
+Attack: Object : Callable :EITHER 
     Weapon: String : Const
     MeleeRanged: Enum - Melee - Ranged - Magic : Const 
     Range: Int : Const 
@@ -28,6 +29,6 @@ Attack: Object : Callable
     Description: String : Const : Button - Display
 AC: Int : Const 
 
-ArmyKills: Object : Callable - None  
+ArmyKills: Object : Callable - None :EITHER  
     Bonus: Int : Const 
     BaseDamageMultiplier: Int : Const 

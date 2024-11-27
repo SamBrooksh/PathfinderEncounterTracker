@@ -4,7 +4,8 @@ from pprint import pp
 from enum import Enum
 from abc import ABC
 from random import randint
-
+from typing import Self
+#Globals for various purposes
 object_dict = {}
 basis = {}
 
@@ -36,7 +37,7 @@ class DamageType:
             rolls = []
             nDice, nDieRoll = self.amount.split('d')
             for _ in range(int(nDice)):
-                rolls.append(randint(1, int(nDieRoll)+1))
+                rolls.append(randint(1, int(nDieRoll)))
             return rolls, self.d_type 
             #Roll then give result
         elif self.amount[0] == '.':
@@ -83,7 +84,7 @@ class AttackObject(DictObject):
                     filled.append((result[i][0], self.dict_object['BaseType']))
                 else:
                     filled.append(result[i])
-        return randint(1, 21) + self.dict_object['Bonus'], filled
+        return randint(1, 20) + self.dict_object['Bonus'], filled
     
     def __str__(self) -> str:
         return str(self.dict_object)
@@ -123,10 +124,15 @@ class DamageRollObject(BaseObject):
         return roll
 
 @register
-class ArmyKillsObject(BaseObject):
+class ArmyKillsObject(DictObject):
     def __init__(self, start_dict: dict):
         super().__init__(start_dict)
-        print("Making Army Kills")
+        #print("Making Army Kills")
+    
+    def __call__(self, other:Self)->int:
+        roll = max(0, randint(1, 20) + self.dict_object['Bonus'] - other.dict_object['Bonus'])
+        mult = max(1, self.dict_object['BaseDamageMultiplier'] - other.dict_object['BaseDamageMultiplier'])
+        return roll * mult
 
 def object_creator(typ: str, *args)->BaseObject:
     if typ not in object_dict:
@@ -218,6 +224,8 @@ def build_tree(file:str="samplefile.txt")->dict:
                         to_build[-1][data[0]] = data[1]
                     except:
                         print(f"Invalid type! {data[0]} must be String type, got {data[1]} instead on line {number}. Skipping...") 
+                elif sub_tree['TYPE'] == 'List':
+                    to_build[-1][data[0]] = data[1].split('-')
                 elif sub_tree['TYPE'] == 'Object':
                     try:
                         to_build[-1][data[0]] = object_creator(data[0].lower()+'object', data[1:])
@@ -252,35 +260,62 @@ def build_tree(file:str="samplefile.txt")->dict:
             to_build.pop()
             previous_key.pop()
         return result
-                
-def roll_attack(target: dict)->tuple[int, list[DamageType], int]:
-    #Returns the attack roll, the attack breakdown and the total damage
-    attack, damage = target['Attack']()
-    #Check for Stats
-    total_damage = 0
-    for rolls in range(len(damage)):
-        for each_roll in range(len(damage[rolls][0])):
-            if isinstance(damage[rolls][0][each_roll], str):
-                #Parse Variable
-                temp = list(damage[rolls])
-                info = temp[0][each_roll].split('.')
-                if info[0] == 'Stats':
-                    temp[0][each_roll] = (target['Stats'][info[1]] - 10) // 2 
-                    total_damage += temp[0][each_roll]
+
+class UnitTracker:
+    def __init__(self, start_dict: dict) -> None:
+        self.units = {}
+        self.army_units = {}
+        self.last_unit_dmg = []
+        self.last_army_dmg = []
+        self.unit_breakdown = []
+        self.army_breakdown = []
+        pass         
+
+    def roll_attack(self, target: str)->tuple[int, list[DamageType], int]:
+        #Returns the attack roll, the attack breakdown and the total damage
+        attack, damage = self.units[target]['Attack']()
+        #Check for Stats
+        total_damage = 0
+        for rolls in range(len(damage)):
+            for each_roll in range(len(damage[rolls][0])):
+                if isinstance(damage[rolls][0][each_roll], str):
+                    #Parse Variable
+                    temp = list(damage[rolls])
+                    info = temp[0][each_roll].split('.')
+                    if info[0] == 'Stats':
+                        temp[0][each_roll] = (self.units[target]['Stats'][info[1]] - 10) // 2 
+                        total_damage += temp[0][each_roll]
+                    else:
+                        print("Not yet implemented for using something else")
+                        break
+                    damage[rolls] = tuple(temp)
                 else:
-                    print("Not yet implemented for using something else")
-                    break
-                damage[rolls] = tuple(temp)
-            else:
-                total_damage += damage[rolls][0][each_roll]
-    return (attack, damage, max(0, total_damage))
+                    total_damage += damage[rolls][0][each_roll]
+        return (attack, damage, max(0, total_damage))
+
+    def roll_army_attack(self, source: str, target:str)->int:
+        dmg = self.army_units[source]['ArmyKills'](self.army_units[target]['ArmyKills']) 
+        return dmg
+
+    def attack(self, source: str, target:str)->dict:
+        global last_dmg, breakdown
+        if 'ArmyKills' in source and 'ArmyKills' in target:
+            dmg, target = self.roll_army_attack(source, target)
+        elif 'Attack' in source and 'Attack' in target:
+            tohit, _breakdown, dmg = self.roll_attack(source)
+            self.unit_breakdown.append(_breakdown)
+            self.last_unit_dmg.append(dmg)
+            #Calculate damage to target then return target
+        return target
 
 def main():
     sampletree = build_tree() 
     pp(sampletree)
     print(sampletree['drow1']['Attack']())
     print(sampletree['drow2']['Attack']())
-    print(roll_attack(sampletree['drow2']))
+    #print(roll_attack(sampletree['drow2']))
+    print(sampletree['drowarmy1']['ArmyKills'](sampletree['drowarmy1']['ArmyKills']))
+    #print(roll_army_attack(sampletree['drowarmy1'], sampletree['drowarmy1']))
     
 
 if __name__ == "__main__":
