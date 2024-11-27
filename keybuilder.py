@@ -15,7 +15,7 @@ def load_keys(file:str="possiblekeys.txt"):
     details = {}
     with open (file, 'r') as fin:
         spacing = [0]
-        previous_item = []
+        previous_item = [details]
         temp_holder = None 
         for line in fin:
             if line.isspace():
@@ -26,7 +26,7 @@ def load_keys(file:str="possiblekeys.txt"):
                 previous_item.append(temp_holder)
             while get_spacing(line) < spacing[-1]: # Remove level
                 #Has current error, where need to allow multiple tabs being removed
-                details[previous_item[-1]['KEY']] = previous_item[-1]
+                previous_item[-2][previous_item[-1]['KEY']] = previous_item[-1]
                 previous_item.pop()
                 spacing.pop()
                 #spacing = get_spacing(line)

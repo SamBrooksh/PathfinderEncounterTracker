@@ -14,7 +14,7 @@ class DamageType:
         self.amount = amount
         if d_type is not None:
             temp = False
-            for j in basis['DamageRoll']['DamageType']['TYPE']:
+            for j in basis['Attack']['DamageRoll']['DamageType']['TYPE']:
                 if d_type.upper() == j.name.upper():
                     self.d_type = j  
                     temp = True
@@ -27,8 +27,9 @@ class DamageType:
     def to_file(self)->str:
         temp = ""
         if self.d_type is not None:
-            temp = '#' + self.d_type.value
+            temp = '#' + self.d_type.name
         return str(self.amount) + temp
+    
     def __str__(self) -> str:
         return f"{self.amount} : {self.d_type}"
 
@@ -55,24 +56,35 @@ class BaseObject(ABC):
         pass
     def to_file(space_start: int)->str:
         pass
+    
 class DictObject(BaseObject):
     def __init__(self, start_dict: dict) -> None:
         self.dict_object = start_dict[0]
+    def __str__(self) -> str:
+        return str(self.dict_object)
+    def __repr__(self) -> str:
+        return repr(self.dict_object)
+    def to_file(self, start_space:int)->str:
+        space = " " * start_space
+        string = ""
+        for key in self.dict_object:
+            if key == key.upper():
+                continue
+            if isinstance(self.dict_object[key], BaseObject):
+                string += self.dict_object[key].to_file(start_space)
+            elif isinstance(self.dict_object[key], Enum):
+                string += space + f"{key}: {self.dict_object[key].name}\n"
+            elif isinstance(self.dict_object[key], list):
+                string += ' ' * 4 + f"{key}: " + '-'.join(self.dict_object[key])+"\n"
+            else:
+                string += space + f"{key}: {self.dict_object[key]}\n"
+        return string
 
 @register
 class AttackObject(DictObject):
     def __init__(self, start_dict: dict):
         super().__init__(start_dict)
-        if 'Bonus' not in self.dict_object:
-            self.dict_object['Bonus'] = 0
-        if 'BaseType' not in self.dict_object:
-            self.dict_object['BaseType'] = basis['Attack']['BaseType']['TYPE'].Bludgeoning
             #Default BaseType
-        if 'DamageRoll' not in self.dict_object:
-            self.dict_object['DamageRoll'] = DamageRollObject("1d4")
-
-    def to_file(space_start: int)->str:
-        pass
 
     def __call__(self, *args: Any, **kwds: Any) -> tuple[int, list[DamageType]]:
         #Returns the roll, and the damage if hit - the breakdown
@@ -84,13 +96,7 @@ class AttackObject(DictObject):
                     filled.append((result[i][0], self.dict_object['BaseType']))
                 else:
                     filled.append(result[i])
-        return randint(1, 20) + self.dict_object['Bonus'], filled
-    
-    def __str__(self) -> str:
-        return str(self.dict_object)
-    
-    def __repr__(self) -> str:
-        return repr(self.dict_object)
+        return randint(1, 20) + self.dict_object['AttackBonus'], filled
 
 @register
 class DamageRollObject(BaseObject):
@@ -99,12 +105,11 @@ class DamageRollObject(BaseObject):
         self._damage_rolls = []
         adds_string = start_string[0]['Value'].split('+')
         for sub in adds_string:
-            temp = sub.split('#')#Use the # to identify the different types I think?
+            temp = sub.split('#')                                       #Use the # to identify the different types I think?
             if len(temp) > 1:
                 self._damage_rolls.append(DamageType(None, temp[0], temp[1]))
             else:
-                self._damage_rolls.append(DamageType(None, temp[0]))#Change None to the default somehow
-        #print("Making Damage Roll Object")
+                self._damage_rolls.append(DamageType(None, temp[0]))    #None gets changed when attacking
     
     def __str__(self) -> str:
         string = f"<Damage Roll Object: Rolls: "
@@ -112,6 +117,14 @@ class DamageRollObject(BaseObject):
             string += str(self._damage_rolls[rolls]) + ', '
         string = string[:-2]
         string += '>'
+        return string
+
+    def to_file(self, space_start: int)->str:
+        space = ' ' * space_start
+        indent = ' ' * (space_start + 4)
+        string = space + 'DamageRoll:\n'
+        sub = '+'.join(list(map(lambda x: x.to_file(), self._damage_rolls)))
+        string += indent + 'Value:' + sub + '\n'
         return string
 
     def __repr__(self) -> str:
@@ -127,7 +140,6 @@ class DamageRollObject(BaseObject):
 class ArmyKillsObject(DictObject):
     def __init__(self, start_dict: dict):
         super().__init__(start_dict)
-        #print("Making Army Kills")
     
     def __call__(self, other:Self)->int:
         roll = max(0, randint(1, 20) + self.dict_object['Bonus'] - other.dict_object['Bonus'])
@@ -148,14 +160,155 @@ def sub_basis(basis: dict, keys: list)->tuple[bool, dict]:
             return (False, "")
     return (True, curr) #Maybe?
 
+def add_int(base_dict:dict, key:str, intstring: str, number: int = 0)->dict:
+    if key in base_dict:
+        print(f'{key} ALREADY DEFINED: SKIPPING')
+        return base_dict
+    try:
+        base_dict[key] = int(intstring)
+    except:
+        print(f"Invalid type! {key} must be Int type, got {intstring} instead on line {number}. Skipping...")
+    return base_dict
+
+def add_str(base_dict: dict, key: str, string: str, number: int = 0)->dict:
+    if key in base_dict:
+        print(f'{key} ALREADY DEFINED: SKIPPING')
+        return base_dict
+    try:
+        base_dict[key] = string
+    except:
+        print(f"Invalid type! {key} must be String type, got {string} instead on line {number}. Skipping...") 
+    return base_dict
+
+def add_enum(base_dict:dict, key:str, enum_val: str, enum_decl: Enum, number: int = 0)->dict:
+    for j in enum_decl:
+        if enum_val.upper() ==  j.name.upper():
+            base_dict[key] = j  
+            return base_dict
+    print(f"Invalid ENUM value! Should be {enum_decl}, Found {key} : {enum_val} on line {number}")
+    return base_dict
+
+def add_dict(base_dict: dict, key: str, value: dict, number: int=0)->dict:
+    for sub_key in basis[key]:
+        if sub_key not in value and isinstance(basis[key][sub_key], dict) and 'GENERATE' in basis[key][sub_key]:
+            generator = basis[key][sub_key]
+            is_dict = 'TYPE' in basis[key][sub_key] and basis[key][sub_key]['TYPE'] == 'Dictionary'
+            if generator == True:
+                # It's an object so make it based off of the Default values
+                generator = add_object({}, sub_key, {}, [sub_key], number)
+                value[sub_key] = generator[sub_key]        
+                continue
+            elif '.' in generator:
+                if generator[1:] not in value:
+                    print(f'CAN NOT FIND VARIABLE TO USE AS GENERATOR {generator} in {value}')
+                    raise KeyError(f'CAN NOT FIND VARIABLE TO USE AS GENERATOR {generator} in {value}')
+                generator = value[generator[1:]]
+            elif is_dict:
+                generator = add_dict({}, sub_key, {}, number)
+                value[sub_key] = generator[sub_key]
+                continue
+            else:
+                value = add_base_on_type(value, generator, sub_key, generator['GENERATE'], number)
+
+
+    base_dict[key] = value
+    base_dict[key].pop('KEY', None) 
+    return base_dict 
+
+def add_base_on_type(base_dict:dict, sub_tree: dict, key: str, value: str|dict, number: int = 0, path:list=None)->dict:
+    if 'TYPE' in sub_tree:
+        if sub_tree['TYPE'] == 'Int':
+            base_dict = add_int(base_dict, key, value, number)
+        elif sub_tree['TYPE'] == 'String':
+            base_dict = add_str(base_dict, key, value, number)
+        elif sub_tree['TYPE'] == 'List':
+            base_dict[key] = value.split('-')
+        elif sub_tree['TYPE'] == 'Object':
+            base_dict = add_object(base_dict, key, value, path, number)
+        elif sub_tree['TYPE'] == 'Dictionary':
+            base_dict = add_dict(base_dict, key, value, number)
+        elif issubclass(sub_tree['TYPE'], Enum):
+            base_dict = add_enum(base_dict, key, value, sub_tree['TYPE'], number)
+            #Handle the last instance
+    return base_dict
+
+def add_object(base_dict: dict, key:str, info:dict, path: list,number: int =0)->dict:
+    try:
+        _, sub = sub_basis(basis, path)
+        eithers = False
+        for sub_key in sub:
+            if sub_key not in info and isinstance(sub[sub_key], dict) and 'REQUIRED' in sub[sub_key]:
+                print(f'MISSING REQUIRED KEY: {key} in {sub_key} finished on line {number}')
+                all_reqs = False
+                raise KeyError(f'MISSING REQUIRED KEY: {key} in {sub_key} finished on line {number}')
+            elif sub_key in info and isinstance(sub[sub_key], dict) and 'EITHER' in sub[sub_key]:
+                if eithers:
+                    print(f'CAN NOT HAVE MULTIPLE EITHER VALUES {sub_key} in {key} finished on line {number}')
+                    raise KeyError(f'CAN NOT HAVE MULTIPLE EITHER VALUES {sub_key} in {key} finished on line {number}')
+                else:
+                    eithers = True
+        for sub_key in sub:
+            if sub_key not in info and isinstance(sub[sub_key], dict) and 'GENERATE' in sub[sub_key]:
+                if sub[sub_key]['GENERATE'] == True:
+                    info = add_base_on_type(info, sub[sub_key], sub_key, {}, number, path+[sub_key])
+                else:
+                    info = add_base_on_type(info, sub[sub_key], sub_key, sub[sub_key]['GENERATE'], number, path+[sub_key])
+
+        base_dict[key] = object_creator(key.lower()+'object', info)
+    except Exception as e:
+        print(f"Invalid type! {key} must be Class Definition - Not found, got {info} on line {number}. Skipping...") 
+    return base_dict            
+
+def complete_unit(base_dict: dict, add_key: str, to_add: dict, number:int = 0):
+    all_reqs = True 
+    eithers = False
+    for key in basis:
+        if 'REQUIRED' in basis[key]:
+            if key not in to_add:
+                print(f'MISSING REQUIRED KEY: {key} in {add_key} finished on line {number}')
+                all_reqs = False
+                raise KeyError(f'MISSING REQUIRED KEY: {key} in {add_key} finished on line {number}')
+        elif 'EITHER' in basis[key]:
+            if key in to_add and eithers:
+                print(f'CAN NOT HAVE MULTIPLE EITHER VALUES {key} in {add_key} finished on line {number}')
+                raise KeyError(f'CAN NOT HAVE MULTIPLE EITHER VALUES {key} in {add_key} finished on line {number}')
+            elif key in to_add:
+                eithers = True
+    for sub_key in basis:
+        if sub_key not in to_add and isinstance(basis[sub_key], dict) and 'GENERATE' in basis[sub_key]:
+            generator = basis[sub_key]
+            is_dict = 'TYPE' in basis[sub_key] and basis[sub_key]['TYPE'] == 'Dictionary'
+            sub_tree_var = basis[sub_key]['TYPE']
+            if generator == True:
+                # It's an object so make it based off of the Default values
+                generator = add_object({}, sub_key, {}, [sub_key], number)
+                to_add[sub_key] = generator[sub_key]        
+                continue
+            elif '.' in generator:
+                if generator[1:] not in to_add:
+                    print(f'CAN NOT FIND VARIABLE TO USE AS GENERATOR {generator} in {to_add}')
+                    raise KeyError(f'CAN NOT FIND VARIABLE TO USE AS GENERATOR {generator} in {to_add}')
+                generator = to_add[generator[1:]]
+            elif is_dict:
+                sub_tree_var = basis[sub_key]
+                generator = add_dict({}, sub_key, {}, number)
+                to_add[sub_key] = generator[sub_key]
+                continue
+
+            to_add = add_base_on_type(to_add, sub_tree_var, sub_key, generator, number)
+    if not all_reqs:
+        pass
+    base_dict[add_key] = to_add
+    base_dict[add_key].pop('KEY', None)
+    return base_dict 
 
 def build_tree(file:str="samplefile.txt")->dict:
     global basis
     basis = load_keys()
     with open(file, 'r') as fin:
-        spacing = [0]   #Track Spacing
-        result = {} # Essentially Place each Character into this
-        to_build = []   #Stores the info of building the tree - Will create Dictionaries
+        spacing = [0]       # Track Spacing
+        result = {}         # Essentially Place each Character into this
+        to_build = []       # Stores the info of building the tree - Will create Dictionaries
         previous_key = []
         tracker = []
         number = 0
@@ -181,21 +334,12 @@ def build_tree(file:str="samplefile.txt")->dict:
                     #Handle if it should be an object or not here
                     _, sub_tree = sub_basis(basis, tracker)
                     key_value = to_build[-1]['KEY']
-                    if 'TYPE' in sub_tree:
-                        if sub_tree['TYPE'] == 'Object':
-                            try:
-                                to_build[-2][previous_key[-1]] = object_creator(previous_key[-1].lower()+'object', to_build[-1])
-                            except Exception as e:
-                                print(f"Invalid type! {previous_key[-1]} must be Class Definition - Not found, got {to_build} ending on line {number}. Skipping...") 
-
-                        else:
-                            to_build[-2][key_value] = to_build[-1]
-                            to_build[-2][key_value].pop('KEY', None)  
+                    to_build[-2] = add_base_on_type(to_build[-2], sub_tree, key_value, to_build[-1], number, tracker)
                     tracker.pop()       
                 else:
-                    result[previous_key[-1]] = to_build[-1]
-                    result[previous_key[-1]].pop('KEY', None)    #Make it so that it isn't redundant
-                    tracker = []    #Empty out Tracker
+                    #Go through and check any required ones, and either ones
+                    result = complete_unit(result, previous_key[-1], to_build[-1], number)
+                    tracker = []                                    # Empty out Tracker
                 to_build.pop()
                 spacing.pop()
                 previous_key.pop()   
@@ -204,6 +348,7 @@ def build_tree(file:str="samplefile.txt")->dict:
             if data[1] == '':
                 #May need to test if there is just a space
                 continue
+
             tracker.append(data[0])
             valid, sub_tree = sub_basis(basis, tracker)
             tracker.pop()
@@ -213,50 +358,16 @@ def build_tree(file:str="samplefile.txt")->dict:
                 continue
 
             #Type Check/Handle the different types appropriately
-            if 'TYPE' in sub_tree:
-                if sub_tree['TYPE'] == 'Int':
-                    try:
-                        to_build[-1][data[0]] = int(data[1])
-                    except:
-                        print(f"Invalid type! {data[0]} must be Int type, got {data[1]} instead on line {number}. Skipping...")
-                elif sub_tree['TYPE'] == 'String':
-                    try:
-                        to_build[-1][data[0]] = data[1]
-                    except:
-                        print(f"Invalid type! {data[0]} must be String type, got {data[1]} instead on line {number}. Skipping...") 
-                elif sub_tree['TYPE'] == 'List':
-                    to_build[-1][data[0]] = data[1].split('-')
-                elif sub_tree['TYPE'] == 'Object':
-                    try:
-                        to_build[-1][data[0]] = object_creator(data[0].lower()+'object', data[1:])
-                    except:
-                        print(f"Invalid type! {data[0]} must be Class Definition - Not found, got {data} on line {number}. Skipping...") 
-       
-                elif issubclass(sub_tree['TYPE'], Enum):
-                    temp = False
-                    for j in sub_tree['TYPE']:
-                        if data[1].upper() ==  j.name.upper():
-                            #print(f"Made a {j} enum!")
-                            to_build[-1][data[0]] = j  
-                            temp = True
-                    if not temp:
-                        print(f"Invalid ENUM value! Should be {sub_tree['TYPE']}, Found {data} on line {number}")
-                 #Handle the last instance
+            to_build[-1] = add_base_on_type(to_build[-1], sub_tree, data[0], data[1], number) 
+            #Handle the last instance
         previous_key.pop()
         while len(previous_key) != 0:
             if len(previous_key) > 1:
                 _, sub_tree = sub_basis(basis, tracker)
                 key_value = to_build[-1]['KEY']
-                if 'TYPE' in sub_tree:
-                    if sub_tree['TYPE'] == 'Object':
-                        to_build[-2][key_value] = object_creator(key_value.lower()+'object', to_build[-1])
-                        # Handle the popping and all other stuff in object 
-                    else:
-                        to_build[-2][key_value] = to_build[-1]
-                        to_build[-2][key_value].pop('KEY', None)     
+                to_build[-2] = add_base_on_type(to_build[-2], sub_tree, key_value, to_build[-1], number, tracker)
             else:
-                result[previous_key[-1]] = to_build[-1]
-                result[previous_key[-1]].pop('KEY', None)    #Make it so that it isn't redundant
+                result = complete_unit(result, previous_key[-1], to_build[-1], number)
             to_build.pop()
             previous_key.pop()
         return result
@@ -269,8 +380,98 @@ class UnitTracker:
         self.last_army_dmg = []
         self.unit_breakdown = []
         self.army_breakdown = []
-        pass         
+        #TODO: Finish!
+        for unit in start_dict:
+            if 'Attack' in start_dict[unit]:
+                self.units[unit] = start_dict[unit]
+            elif 'ArmyKills' in start_dict[unit]:
+                self.army_units[unit] = start_dict[unit]
+            else:
+                print(f"INVALID UNIT! {start_dict[unit]}")
 
+    def __str__(self) -> str:
+        to_make = "Units:\n"
+        for i in self.units:
+            to_make += str(self.units[i]) + '\n'
+        to_make += 'Army Units:\n'
+        for i in self.army_units:
+            to_make += str(self.army_units[i]) + '\n'
+        to_make += 'Unit Damage Breakdown:\n'
+        for i in self.last_unit_dmg:
+            to_make += i + '\n'
+        to_make += 'Army Unit Damage Breakdown:\n'
+        for i in self.last_army_dmg:
+            to_make += i 
+        to_make += 'Unit Breakdown\n'
+        for i in self.unit_breakdown:
+            to_make += i + '\n'
+        to_make += 'Army Unit Breakdown\n'
+        for i in self.army_breakdown:
+            to_make += i + '\n'
+        return to_make
+    
+    def dict_key_valid(tester, typ)->bool:
+        if typ.lower() == type(tester).__name__.lower():
+            return True
+        return False
+    
+    def enum_key_valid(enums, typ)->bool:
+        for e in typ:
+            if enums.lower() == e.name.lower():
+                return True
+        return False
+    
+    def dict_to_file(unit_dict: dict, basis: dict)->str:
+        string = ""
+        for i in unit_dict:
+            string += f"{i}:\n"
+            for subkey in unit_dict[i]:
+                key_exists, key_basis = sub_basis(basis, [subkey])
+                if not key_exists:
+                    print(f"SAVING KEY NOT FOUND! {subkey} in {i}")
+                    continue
+
+                if isinstance(unit_dict[i][subkey], BaseObject):
+                    if not UnitTracker.dict_key_valid(unit_dict[i][subkey], object_dict[subkey.lower()+'object'].__name__):
+                        print(f"INVALID SAVING TYPE: {subkey} in {i} should be type {key_basis['TYPE']}")
+                        continue
+                    string += ' ' * 4 + f"{subkey}:\n"
+                    string += unit_dict[i][subkey].to_file(8)
+                elif isinstance(unit_dict[i][subkey], Enum):
+                    if not UnitTracker.enum_key_valid(unit_dict[i][subkey].name, key_basis['TYPE']): 
+                        print(f"SAVING INVALID TYPE: {subkey} in {i}")
+                        continue
+                    string += ' ' * 4 + f"{subkey}: {unit_dict[i][subkey].name}\n"
+                elif isinstance(unit_dict[i][subkey], dict):
+                    string += ' ' * 4 + f"{subkey}:\n"
+                    for tertiary_key in unit_dict[i][subkey]:
+                        exists, basis_sub = sub_basis(basis, [subkey, tertiary_key])
+                        if not exists:
+                            print(f"SAVING Key not Found! {tertiary_key} in {subkey} in {i}")
+                            continue
+                        if not UnitTracker.dict_key_valid(unit_dict[i][subkey][tertiary_key], basis_sub['TYPE']): 
+                            print(f"SAVING INVALID TYPE: {tertiary_key} in {subkey} in {i}")
+                            continue
+                        string += ' ' * 8 + f"{tertiary_key}: {unit_dict[i][subkey][tertiary_key]}\n"
+                elif isinstance(unit_dict[i][subkey], list):
+                    if not UnitTracker.dict_key_valid(unit_dict[i][subkey], key_basis['TYPE']):
+                        print(f"INVALID SAVING TYPE: {subkey} in {i} should be type {key_basis['TYPE']}")
+                    string += ' ' * 4 + f"{subkey}: " + '-'.join(unit_dict[i][subkey])+"\n"
+                else:
+                    if key_basis['TYPE'] == 'String':   #Little janky
+                        key_basis['TYPE'] = 'str'
+                    if not UnitTracker.dict_key_valid(unit_dict[i][subkey], key_basis['TYPE']): 
+                        print(f"SAVING INVALID TYPE: {tertiary_key} in {subkey} in {i}")
+                        continue
+                    string += ' ' * 4 + f"{subkey}: {unit_dict[i][subkey]}\n"
+        return string
+
+    def to_file(self, basis: dict)->str:
+        string = ""
+        string += UnitTracker.dict_to_file(self.units, basis)
+        string += UnitTracker.dict_to_file(self.army_units, basis)
+        return string
+    
     def roll_attack(self, target: str)->tuple[int, list[DamageType], int]:
         #Returns the attack roll, the attack breakdown and the total damage
         attack, damage = self.units[target]['Attack']()
@@ -310,13 +511,19 @@ class UnitTracker:
 
 def main():
     sampletree = build_tree() 
+    units = UnitTracker(sampletree)
     pp(sampletree)
     print(sampletree['drow1']['Attack']())
     print(sampletree['drow2']['Attack']())
-    #print(roll_attack(sampletree['drow2']))
     print(sampletree['drowarmy1']['ArmyKills'](sampletree['drowarmy1']['ArmyKills']))
-    #print(roll_army_attack(sampletree['drowarmy1'], sampletree['drowarmy1']))
-    
+    print(units)
+    print(sampletree['drow2']['Attack'].dict_object['DamageRoll'].to_file(4))
+    print(sampletree['drow2']['Attack'].to_file(4))
+    with open('test.txt', 'w') as fout:
+        print(units.to_file(basis), file=fout)
+    units2 = UnitTracker(build_tree('test.txt'))
+    print(units2)
 
+    
 if __name__ == "__main__":
     main()

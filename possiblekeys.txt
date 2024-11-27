@@ -1,34 +1,35 @@
 CR: Int : Const 
-Name: String : Const 
-Alliance: Enum - Hostile - Friendly - Neutral : Const 
-Stats: Dictionary : Button - Display
-    STR: Int : Const 
-    INT: Int : Const 
-    WIS: Int : Const 
-    DEX: Int : Const
-    CHA: Int : Const
-    CON:Int : Const
-    Reflex: Int : Const 
-    Fortitude: Int : Const 
-    Will: Int : Const 
-MaxHp: Int : Const :REQUIRED
-CurrentHp: Int : Modifiable
+Name: String : Const : REQUIRED
+Alliance: Enum - Hostile - Friendly - Neutral : Const : GENERATE - Neutral
+Stats: Dictionary : Button - Display : GENERATE
+    STR: Int : Const : GENERATE - 10
+    INT: Int : Const : GENERATE - 10
+    WIS: Int : Const : GENERATE - 10
+    DEX: Int : Const : GENERATE - 10
+    CHA: Int : Const : GENERATE - 10
+    CON:Int : Const : GENERATE - 10
+    Reflex: Int : Const : GENERATE - 0
+    Fortitude: Int : Const : GENERATE - 0
+    Will: Int : Const : GENERATE - 0
+MaxHp: Int : Const : REQUIRED
+CurrentHp: Int : Modifiable : GENERATE - .MaxHp
 Notes: String : Const : Button - Display
 Description: String : Const : Button - Display
 Gear: List : Modifiable
 
 Attack: Object : Callable :EITHER 
-    Weapon: String : Const
-    MeleeRanged: Enum - Melee - Ranged - Magic : Const 
+    Weapon: String : Const : REQUIRED
+    MeleeRanged: Enum - Melee - Ranged - Magic : Const : GENERATE - Melee
     Range: Int : Const 
-    BaseType: Enum -Bludgeoning- Piercing- Slashing-Magic : Const 
-    AttackBonus: Int: Const
-    DamageRoll: Object : Callable - None 
-        Value: String: Const - Can have a value from Stats (it will autocalc bonus) by doing .Stats.VAL - If ever need to can make this used other player stats as well
+    BaseType: Enum -Bludgeoning- Piercing- Slashing-Magic : Const : GENERATE - Bludgeoning
+    AttackBonus: Int: Const : GENERATE - 0
+    DamageRoll: Object : Callable - None : GENERATE
+        Value: String: Const : GENERATE - 1
         DamageType: Enum - Bludgeoning- Piercing- Slashing - Magic - Fire - Cold - Electricity - Acid
     Description: String : Const : Button - Display
-AC: Int : Const 
+AC: Int : Const : GENERATE - 10
 
 ArmyKills: Object : Callable - None :EITHER  
-    Bonus: Int : Const 
-    BaseDamageMultiplier: Int : Const 
+    Bonus: Int : Const : GENERATE - 0
+    BaseDamageMultiplier: Int : Const : GENERATE - 1
+    Name: String : Const : REQUIRED

@@ -1,8 +1,23 @@
 minimum1:
-    Name: Test 
+    Name: Test
     MaxHp: 5
     Attack:
         Weapon: Sword
+        MeleeRanged: Melee
+        BaseType: Bludgeoning
+        AttackBonus: 0
+        DamageRoll:
+            Value:1
+    Stats:
+        STR: 10
+        INT: 10
+        WIS: 10
+        DEX: 10
+        CHA: 10
+        CON: 10
+        Reflex: 0
+        Fortitude: 0
+        Will: 0
 drow1:
     Name: Drow Warrior
     CR: 10
@@ -24,9 +39,9 @@ drow1:
         Weapon: Sword
         MeleeRanged: Melee
         BaseType: Slashing
-        DamageRoll: 
-            Value: 1d6+2#Electricity
-
+        DamageRoll:
+            Value:1d6+2#Electricity
+        AttackBonus: 0
 drow2:
     Name: Drow Warrior
     CR: 10
@@ -46,11 +61,10 @@ drow2:
         Weapon: Sword
         MeleeRanged: Melee
         BaseType: Slashing
-        DamageRoll: 
-            Value: 5d6+2+.Stats.STR+-2#Fire+3d6#Cold
+        DamageRoll:
+            Value:5d6+2+.Stats.STR+-2#Fire+3d6#Cold
         AttackBonus: 12
     Gear: Test- Test2-Test3
-
 drowarmy1:
     Name: Drow Excursion
     CR: 13
@@ -59,3 +73,14 @@ drowarmy1:
         BaseDamageMultiplier: 3
         Name: Hail of Arrows
     MaxHp: 50
+    Stats:
+        STR: 10
+        INT: 10
+        WIS: 10
+        DEX: 10
+        CHA: 10
+        CON: 10
+        Reflex: 0
+        Fortitude: 0
+        Will: 0
+

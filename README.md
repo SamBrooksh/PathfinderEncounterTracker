@@ -28,7 +28,7 @@ Keys:
         Range: Int (in feet)
         Type: Set(Bludgeoning, Piercing, Slashing)
         DamageRoll: Object and Callable 
-            Value: String - What to roll for the damage and the like
+            Value: String - What to roll for the damage and the like - Can have a value from Stats (it will autocalc bonus) by doing .Stats.VAL - If ever need to can make this used other player stats as well
     AC: Int
     
 --------- Army Specific -----------
