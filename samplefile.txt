@@ -29,7 +29,7 @@ drow2:
         INT: 10
         WIS: 10
         CHA: 10
-        STR: 10
+        STR: 12
         CON: 10
         DEX: 10
         Fortitude: 10
@@ -43,6 +43,6 @@ drow2:
         MeleeRanged: Melee
         BaseType: Slashing
         DamageRoll: 
-            Value: 1d6+2
+            Value: 5d6+2+.Stats.STR+-2+3d6
         AttackBonus: 12
     

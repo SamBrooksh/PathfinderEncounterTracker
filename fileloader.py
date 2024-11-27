@@ -31,10 +31,12 @@ class DamageType:
         if 'd' in self.amount:
             rolls = []
             nDice, nDieRoll = self.amount.split('d')
-            for _ in range(nDice):
-                rolls.append(randint(1, nDieRoll+1))
+            for _ in range(int(nDice)):
+                rolls.append(randint(1, int(nDieRoll)+1))
             return rolls, self.d_type 
             #Roll then give result
+        elif self.amount[0] == '.':
+            return [self.amount[1:]], self.d_type
         else:
             return [int(self.amount)], self.d_type
 
@@ -54,13 +56,26 @@ class DictObject(BaseObject):
 class AttackObject(DictObject):
     def __init__(self, start_dict: dict):
         super().__init__(start_dict)
-        print("Making Attack Object")
+        if 'Bonus' not in self.dict_object:
+            self.dict_object['Bonus'] = 0
+        if 'BaseType' not in self.dict_object:
+            self.dict_object['BaseType'] = basis['Attack']['BaseType']['TYPE'].Bludgeoning
+            #Default BaseType
+        if 'DamageRoll' not in self.dict_object:
+            self.dict_object['DamageRoll'] = DamageRollObject("1d4")
+
 
     def __call__(self, *args: Any, **kwds: Any) -> tuple[int, list[DamageType]]:
         #Returns the roll, and the damage if hit - the breakdown
         if 'DamageRoll' in self.dict_object and 'BaseType' in self.dict_object:
-            return self.dict_object['DamageRoll'](self.dict_object['BaseType'])
-        return super().__call__(*args, **kwds)
+            result = self.dict_object['DamageRoll'](self.dict_object['BaseType'])
+            filled = []
+            for i in range(len(result)): 
+                if result[i][1] is None:
+                    filled.append((result[i][0], self.dict_object['BaseType']))
+                else:
+                    filled.append(result[i])
+        return randint(1, 21) + self.dict_object['Bonus'], filled
     
     def __str__(self) -> str:
         return str(self.dict_object)
@@ -95,10 +110,9 @@ class DamageRollObject(BaseObject):
 
     def __call__(self, *args: Any, **kwds: Any) -> list[tuple[int, Enum]]:
         roll = []
-        for rolls in self.count:
-            for _ in range(rolls):
-                roll.append(randint(1, self.die))
-        return rolls, self.bonus
+        for rolls in self._damage_rolls:
+            roll.append(rolls())
+        return roll
 
 @register
 class ArmyKillsObject(BaseObject):
@@ -231,11 +245,34 @@ def build_tree(file:str="samplefile.txt")->dict:
             previous_key.pop()
         return result
                 
+def roll_attack(target: dict)->tuple[int, list[DamageType], int]:
+    #Returns the attack roll, the attack breakdown and the total damage
+    attack, damage = target['Attack']()
+    #Check for Stats
+    total_damage = 0
+    for rolls in range(len(damage)):
+        for each_roll in range(len(damage[rolls][0])):
+            if isinstance(damage[rolls][0][each_roll], str):
+                #Parse Variable
+                temp = list(damage[rolls])
+                info = temp[0][each_roll].split('.')
+                if info[0] == 'Stats':
+                    temp[0][each_roll] = (target['Stats'][info[1]] - 10) // 2 
+                    total_damage += temp[0][each_roll]
+                else:
+                    print("Not yet implemented for using something else")
+                    break
+                damage[rolls] = tuple(temp)
+            else:
+                total_damage += damage[rolls][0][each_roll]
+    return (attack, damage, max(0, total_damage))
 
 def main():
     sampletree = build_tree() 
     pp(sampletree)
-    #print(sampletree['drow1']['Attack'].dict_object)
+    print(sampletree['drow1']['Attack']())
+    print(sampletree['drow2']['Attack']())
+    print(roll_attack(sampletree['drow2']))
     
 
 if __name__ == "__main__":

@@ -27,7 +27,8 @@ Keys:
         MeleeRanged: Set(Melee, Ranged)
         Range: Int (in feet)
         Type: Set(Bludgeoning, Piercing, Slashing)
-        DamageRoll: Roll - should be able to make it callable and give a result
+        DamageRoll: Object and Callable 
+            Value: String - What to roll for the damage and the like
     AC: Int
     
 --------- Army Specific -----------
@@ -51,3 +52,7 @@ Technically as well for the Kills
 Also need to have a save button/Save as button
 
 Start of program -> choose file to load (or use in the arguments)
+
+# TODO
+Add Resistances, and make it so that the Damage takes this into account
+Add Variables to Attack Bonus

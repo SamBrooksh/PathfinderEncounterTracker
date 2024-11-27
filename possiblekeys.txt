@@ -23,7 +23,7 @@ Attack: Object : Callable
     BaseType: Enum -Bludgeoning- Piercing- Slashing-Magic : Const 
     AttackBonus: Int: Const
     DamageRoll: Object : Callable - None 
-        Value: String: Const
+        Value: String: Const - Can have a value from Stats (it will autocalc bonus) by doing .Stats.VAL - If ever need to can make this used other player stats as well
         DamageType: Enum - Bludgeoning- Piercing- Slashing - Magic - Fire - Cold - Electricity - Acid
     Description: String : Const : Button - Display
 AC: Int : Const 
