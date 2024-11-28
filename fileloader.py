@@ -284,11 +284,13 @@ def complete_unit(base_dict: dict, add_key: str, to_add: dict, number:int = 0):
                 generator = add_object({}, sub_key, {}, [sub_key], number)
                 to_add[sub_key] = generator[sub_key]        
                 continue
-            elif '.' in generator:
-                if generator[1:] not in to_add:
+            elif isinstance(generator['GENERATE'], str) and '.' in generator['GENERATE']:
+                #Make it so that it can "Search" More for Variables
+                if generator['GENERATE'][1:] not in to_add:
                     print(f'CAN NOT FIND VARIABLE TO USE AS GENERATOR {generator} in {to_add}')
                     raise KeyError(f'CAN NOT FIND VARIABLE TO USE AS GENERATOR {generator} in {to_add}')
-                generator = to_add[generator[1:]]
+                generator = to_add[generator['GENERATE'][1:]]
+                sub_tree_var = {'TYPE':sub_tree_var}
             elif is_dict:
                 sub_tree_var = basis[sub_key]
                 generator = add_dict({}, sub_key, {}, number)

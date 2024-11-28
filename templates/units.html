@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+ 
+<head>
+    <title>FlaskTest</title>
+</head>
+ 
+<body>
+    <h2>{{units}}</h2>
+    <ul>
+        {% for name, value in units.units.items() %}
+        <li>
+            <h1> Name: {{name}}</h1>
+            <ol>
+                {% for sub_key, sub_value in units.units[name].items() %}
+                <li>
+                    <p>{{sub_key}} : {{sub_value}}</p>
+                </li>
+                {% endfor %}
+            </ol>
+        </li>
+        {% endfor %}
+    </ul>    
+</body>
+ 
+</html>
