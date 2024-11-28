@@ -380,7 +380,6 @@ class UnitTracker:
         self.last_army_dmg = []
         self.unit_breakdown = []
         self.army_breakdown = []
-        #TODO: Finish!
         for unit in start_dict:
             if 'Attack' in start_dict[unit]:
                 self.units[unit] = start_dict[unit]
@@ -388,6 +387,7 @@ class UnitTracker:
                 self.army_units[unit] = start_dict[unit]
             else:
                 print(f"INVALID UNIT! {start_dict[unit]}")
+        self.basis = basis
 
     def __str__(self) -> str:
         to_make = "Units:\n"
@@ -472,6 +472,15 @@ class UnitTracker:
         string += UnitTracker.dict_to_file(self.army_units, basis)
         return string
     
+    def save(self, basis: dict, file:str="demo.txt")->None:
+        with open(file, 'w') as fout:
+            print(self.to_file(basis), file=fout)
+        with open('INFODUMP'+file, 'a') as fout:
+            print(f"Army Breakdown: {self.army_breakdown}", file=fout)
+            print(f"Army Damage: {self.last_army_dmg}", file=fout)
+            print(f"Unit Breakdown: {self.unit_breakdown}", file=fout)
+            print(f"Unit Damage: {self.last_unit_dmg}", file=fout)
+    
     def roll_attack(self, target: str)->tuple[int, list[DamageType], int]:
         #Returns the attack roll, the attack breakdown and the total damage
         attack, damage = self.units[target]['Attack']()
@@ -499,7 +508,6 @@ class UnitTracker:
         return dmg
 
     def attack(self, source: str, target:str)->dict:
-        global last_dmg, breakdown
         if 'ArmyKills' in source and 'ArmyKills' in target:
             dmg, target = self.roll_army_attack(source, target)
         elif 'Attack' in source and 'Attack' in target:
@@ -523,7 +531,7 @@ def main():
         print(units.to_file(basis), file=fout)
     units2 = UnitTracker(build_tree('test.txt'))
     print(units2)
-
+    units2.save(basis, 'SAMPLE.txt')
     
 if __name__ == "__main__":
     main()
