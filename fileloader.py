@@ -60,6 +60,7 @@ class BaseObject(ABC):
 class DictObject(BaseObject):
     def __init__(self, start_dict: dict) -> None:
         self.dict_object = start_dict[0]
+        self.dict_object.pop('KEY', None)
     def __str__(self) -> str:
         return str(self.dict_object)
     def __repr__(self) -> str:
@@ -534,6 +535,7 @@ def main():
     units2 = UnitTracker(build_tree('test.txt'))
     print(units2)
     units2.save(basis, 'SAMPLE.txt')
+    
     
 if __name__ == "__main__":
     main()

@@ -5,9 +5,14 @@ drow1:
     MaxHp:100
     CurrentHp:100
     AC:15
+    Attack:
+        Weapon: Sword
+
 drow2:
     Name:Drow Warrior
     CR:10
     MaxHp:100
     CurrentHp:100
     AC:30
+    Attack:
+        Weapon: Sword

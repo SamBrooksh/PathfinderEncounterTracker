@@ -6,7 +6,6 @@
 </head>
  
 <body>
-    <h2>{{units}}</h2>
     <ul>
         {% for name, value in units.units.items() %}
         <li>
@@ -14,13 +13,33 @@
             <ol>
                 {% for sub_key, sub_value in units.units[name].items() %}
                 <li>
+                    {% if 'Button' in units.basis[sub_key] and units.basis[sub_key]['Button'] == 'Display' %}
+                    <button onclick=toggle("{{name}}{{sub_key}}")>{{sub_key}}</button>
+                    <div id="{{name}}{{sub_key}}" style="display:none;">{{sub_value}}</div>
+                    {% else %}
                     <p>{{sub_key}} : {{sub_value}}</p>
+                    {% endif %}
                 </li>
                 {% endfor %}
             </ol>
         </li>
         {% endfor %}
     </ul>    
+
+<script>
+    function toggle(id) {
+        var tag = document.getElementById(id);
+        if (tag.style.display == "inline")
+        {
+            tag.style.display = "none";
+        }
+        else
+        {
+            tag.style.display = "inline";
+        }
+    }
+</script>
+        
 </body>
- 
+
 </html>

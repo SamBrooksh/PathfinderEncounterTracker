@@ -15,9 +15,9 @@ MaxHp: Int : Const : REQUIRED
 CurrentHp: Int : Modifiable : GENERATE - .MaxHp
 Notes: String : Const : Button - Display
 Description: String : Const : Button - Display
-Gear: List : Modifiable
+Gear: List : Modifiable : Button - Display
 
-Attack: Object : Callable :EITHER 
+Attack: Object : Callable :EITHER :Button - Call
     Weapon: String : Const : REQUIRED
     MeleeRanged: Enum - Melee - Ranged - Magic : Const : GENERATE - Melee
     Range: Int : Const 
