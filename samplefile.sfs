@@ -26,6 +26,8 @@ drow1:
         BaseType: Slashing
         DamageRoll: 
             Value: 1d6+2#Electricity
+    Resistances:
+        Fire: 3
 
 drow2:
     Name: Drow Warrior
@@ -47,7 +49,7 @@ drow2:
         MeleeRanged: Melee
         BaseType: Slashing
         DamageRoll: 
-            Value: 5d6+2+.Stats.STR+-2#Fire+3d6#Cold
+            Value: 5d6+2+.Stats.STR+-2#Fire+3d6#Cold+2#Fire
         AttackBonus: 12
     Gear: Test- Test2-Test3
     Description: Testing Button

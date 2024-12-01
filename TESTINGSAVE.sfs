@@ -1,0 +1,48 @@
+drow1:
+    Name: Drow Warrior
+    CR: 10
+    Alliance: Friendly
+    MaxHp: 100
+    CurrentHp: 84
+    AC: 15
+    Attack:
+        Weapon: Sword
+        MeleeRanged: Melee
+        BaseType: Bludgeoning
+        AttackBonus: 0
+        DamageRoll:
+            Value:1
+    Stats:
+        STR: 10
+        INT: 10
+        WIS: 10
+        DEX: 10
+        CHA: 10
+        CON: 10
+        Reflex: 0
+        Fortitude: 0
+        Will: 0
+drow2:
+    Name: Drow Warrior
+    CR: 10
+    MaxHp: 100
+    CurrentHp: 75
+    AC: 30
+    Attack:
+        Weapon: Sword
+        MeleeRanged: Melee
+        BaseType: Bludgeoning
+        AttackBonus: 0
+        DamageRoll:
+            Value:1
+    Stats:
+        STR: 10
+        INT: 10
+        WIS: 10
+        DEX: 10
+        CHA: 10
+        CON: 10
+        Reflex: 0
+        Fortitude: 0
+        Will: 0
+

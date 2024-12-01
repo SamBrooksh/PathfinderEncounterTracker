@@ -7,25 +7,74 @@
  
 <body>
     <ul>
+        <div><!-- LAST RESULT -->
+            RESULT: 
+            {% block result %}
+            {% endblock %}
+        </div>
+<!-- This is the Units Section!-->
         {% for name, value in units.units.items() %}
         <li>
-            <h1> Name: {{name}}</h1>
-            <ol>
-                {% for sub_key, sub_value in units.units[name].items() %}
-                <li>
+            <h1>Name: {{units.units[name]['Name']}} <h5>Tag: {{name}}</h5></h1>
+            
+            <h3>
+                HP: {{units.units[name]['CurrentHp']}} / {{units.units[name]['MaxHp']}}
+                <form method="post">
+                    <input type="submit" value="Modify Health">
+                    <input type="text" value="{{name}}" name="name" id="{{name}}" style="display:none">
+                    <input type="number" name="modify_amount" id="modify_amount" required> 
+                    <div>
+                        <select id="type" name="type" required>
+                        {% for type in units.basis['Attack']['DamageRoll']['DamageType']['TYPE'] %}
+                            <option value="{{type}}">{{type.name}}</option>
+                        {% endfor %}
+                        </select>
+                    </div>
+                </form>
+            </h3>
+            
+                {% for sub_key, sub_value in units.units[name]|dictsort %}
+                <div>
                     {% if 'Button' in units.basis[sub_key] and units.basis[sub_key]['Button'] == 'Display' %}
-                    <button onclick=toggle("{{name}}{{sub_key}}")>{{sub_key}}</button>
-                    <div id="{{name}}{{sub_key}}" style="display:none;">{{sub_value}}</div>
-                    {% else %}
-                    <p>{{sub_key}} : {{sub_value}}</p>
+                        <button onclick=toggle("{{name}}{{sub_key}}")>{{sub_key}}</button>
+                        <div id="{{name}}{{sub_key}}" style="display:none;">
+                            -
+                            {% if sub_value.__class__.__name__ == 'dict' %}
+                                {% for dict_item in sub_value|dictsort %}
+                                    {{ dict_item[0] }} : {{ dict_item[1] }} -
+                                {% endfor %}
+                            {% else %}
+                                {{ sub_value }}
+                            {% endif %}
+                        </div>
+                    {% elif units.basis[sub_key]['TYPE'] == 'Object' %}
+                        <!-- Objects-->
+                        {% if units.basis[sub_key]['Button'] == 'Callable' %}
+                            <form method="post" action="{{ url_for(request.endpoint, **request.view_args) }}">
+                                <input type="text" value="{{sub_key}}" id="CallObject" name="CallObject" style="display: none;">
+                                <input type="text" value="{{name}}" id="name" name="name" style="display: none;">
+                                <input type="submit" value="CALL {{sub_key}}" name="Callable">
+                            </form>
+                            
+                        {% endif %}
+                        <button onclick=toggle("{{name}}{{sub_key}}")>{{sub_key}}</button>
+                        <div id="{{name}}{{sub_key}}"style="display:none;">
+                            {% for object_key in units.units[name][sub_key].dict_object %}
+                                <p>{{object_key}} : {{units.units[name][sub_key].dict_object[object_key]}}</p>
+                            {% endfor %}
+                        </div>
+                        
+                    {% elif not units.basis[sub_key]['REQUIRED'] and sub_key != "CurrentHp" %}
+                        <p>{{sub_key}} : {{sub_value}}</p>
                     {% endif %}
-                </li>
+                </div>
                 {% endfor %}
-            </ol>
         </li>
         {% endfor %}
     </ul>    
+<!-- This will be the army section!-->
 
+<!-- In line scripts to manage simple javascript - probably should make it a seperate file-->
 <script>
     function toggle(id) {
         var tag = document.getElementById(id);

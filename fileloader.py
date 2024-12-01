@@ -5,6 +5,7 @@ from enum import Enum
 from abc import ABC
 from random import randint
 from typing import Self
+from copy import deepcopy
 #Globals for various purposes
 object_dict = {}
 basis = {}
@@ -24,6 +25,7 @@ class DamageType:
                 raise KeyError
         else:
             self.d_type = default
+
     def to_file(self)->str:
         temp = ""
         if self.d_type is not None:
@@ -145,7 +147,7 @@ class ArmyKillsObject(DictObject):
     def __call__(self, other:Self)->int:
         roll = max(0, randint(1, 20) + self.dict_object['Bonus'] - other.dict_object['Bonus'])
         mult = max(1, self.dict_object['BaseDamageMultiplier'] - other.dict_object['BaseDamageMultiplier'])
-        return roll * mult
+        return roll, mult, roll * mult
 
 def object_creator(typ: str, *args)->BaseObject:
     if typ not in object_dict:
@@ -305,7 +307,7 @@ def complete_unit(base_dict: dict, add_key: str, to_add: dict, number:int = 0):
     base_dict[add_key].pop('KEY', None)
     return base_dict 
 
-def build_tree(file:str="samplefile.txt")->dict:
+def build_tree(file:str="samplefile.sfs")->dict:
     global basis
     basis = load_keys()
     with open(file, 'r') as fin:
@@ -475,18 +477,19 @@ class UnitTracker:
         string += UnitTracker.dict_to_file(self.army_units, basis)
         return string
     
-    def save(self, basis: dict, file:str="demo.txt")->None:
+    def save(self, basis: dict, file:str="demo.sfs")->None:
         with open(file, 'w') as fout:
             print(self.to_file(basis), file=fout)
+        file = file[:-3] + 'info'   #Save the other infor as a .info
         with open('INFODUMP'+file, 'a') as fout:
-            print(f"Army Breakdown: {self.army_breakdown}", file=fout)
-            print(f"Army Damage: {self.last_army_dmg}", file=fout)
-            print(f"Unit Breakdown: {self.unit_breakdown}", file=fout)
-            print(f"Unit Damage: {self.last_unit_dmg}", file=fout)
+            print(f"Army Breakdown: {'\n'.join(self.army_breakdown)}", file=fout)
+            print(f"Army Damage: {'\n'.join(self.last_army_dmg)}", file=fout)
+            print(f"Unit Breakdown: {'\n'.join(self.unit_breakdown)}", file=fout)
+            print(f"Unit Damage: {'\n'.join(self.last_unit_dmg)}", file=fout)
     
-    def roll_attack(self, target: str)->tuple[int, list[DamageType], int]:
+    def roll_attack(self, target: dict)->tuple[int, list[DamageType], int]:
         #Returns the attack roll, the attack breakdown and the total damage
-        attack, damage = self.units[target]['Attack']()
+        attack, damage = target['Attack']()
         #Check for Stats
         total_damage = 0
         for rolls in range(len(damage)):
@@ -496,7 +499,7 @@ class UnitTracker:
                     temp = list(damage[rolls])
                     info = temp[0][each_roll].split('.')
                     if info[0] == 'Stats':
-                        temp[0][each_roll] = (self.units[target]['Stats'][info[1]] - 10) // 2 
+                        temp[0][each_roll] = (target['Stats'][info[1]] - 10) // 2 
                         total_damage += temp[0][each_roll]
                     else:
                         print("Not yet implemented for using something else")
@@ -506,23 +509,80 @@ class UnitTracker:
                     total_damage += damage[rolls][0][each_roll]
         return (attack, damage, max(0, total_damage))
 
-    def roll_army_attack(self, source: str, target:str)->int:
-        dmg = self.army_units[source]['ArmyKills'](self.army_units[target]['ArmyKills']) 
-        return dmg
+    def roll_army_attack(self, source: dict, target:dict)->dict:
+        roll, mult, total = source['ArmyKills'](target['ArmyKills']) 
+        target['CurrentHp'] -= total
+        self.army_breakdown.append(f"Army {source['Name']} attacks {target['Name']}: Deals {roll} * {mult} ({total}): Remaining HP: {target['CurrentHp']}")
+        self.last_army_dmg.append(f"Total Damage: {total} Breakdown: {roll} * {mult}")
+        return target
 
-    def attack(self, source: str, target:str)->dict:
+    def attack_targets(self, source:dict, target:dict)->dict:
         if 'ArmyKills' in source and 'ArmyKills' in target:
-            dmg, target = self.roll_army_attack(source, target)
+            self.target = self.roll_army_attack(source, target)
         elif 'Attack' in source and 'Attack' in target:
             tohit, _breakdown, dmg = self.roll_attack(source)
-            self.unit_breakdown.append(_breakdown)
-            self.last_unit_dmg.append(dmg)
+            if tohit >= target['AC'] and tohit != 1:    #Miss on 1's
+                target = self.deal_unit_damage(target, _breakdown, dmg, source['Name'])
+            else:
+                self.unit_breakdown.append(f"ATTACK MISSED: {tohit} vs {target['AC']} - {source['Name']} vs {source['Name']}")
             #Calculate damage to target then return target
         return target
+
+    def attack(self, source: str, target:str)->dict:
+        if source in self.units and target in self.units:
+            self.units[target] = self.attack_targets(self.units[source], self.units[target])
+        elif source in self.army_units and target in self.army_units:
+            self.units[target] = self.attack_targets(self.army_units[source], self.army_units[target])
+
+    def get_damage_type(self, base: str)->Enum:
+        print(base)
+        for i in self.basis['Attack']['DamageRoll']['DamageType']['TYPE']:
+            if i.name.upper() == base.upper():
+                return i 
+        return self.basis['Attack']['DamageRoll']['DamageType']['TYPE']['Bludgeoning']
+
+    def deal_unit_damage(self, target: dict, breakdown: list[tuple[list[int], Enum]], dmg:int, source: str)->None:
+        temp_resist = deepcopy(target['Resistances'])
+        details = f"{source} Deals damage to {target['Name']}: Received "
+        if sum(temp_resist.values()) > 0 or dmg < 0:
+            for roll in breakdown:
+                total = sum(roll[0])
+                string = f"{'+'.join(map(str, roll[0]))} {roll[1].name} ({total})"
+                if temp_resist[roll[1].name] > 0 and total > 0:
+                    remove = max(0, temp_resist[roll[1].name] - total)
+                    string += f" Reduced by {temp_resist[roll[1].name] - remove}"
+                    dmg -= (temp_resist[roll[1].name] - remove)
+                    temp_resist[roll[1].name] = remove
+                string += " + "
+                details += string 
+            details = details[:-2]
+        else:
+            for roll in breakdown:
+                print(roll)
+                details += f"{'+'.join(map(str, roll[0]))} {roll[1].name} ({sum(roll[0])})"
+        print(dmg)
+        target['CurrentHp'] -= dmg
+        details += f" {target['Name']} at {target['CurrentHp']} remaining"
+        b = ""
+        for roll in breakdown:
+            b += f"{'+'.join(map(str, roll[0]))} ({sum(roll[0])}) {roll[1].name} + " 
+        b = b[:-2]
+        if 'Attack' in target:
+            self.unit_breakdown.append(details)
+            
+            self.last_unit_dmg.append(f"Total Damage: {dmg} Breakdown: {b}")
+        else:
+            self.army_breakdown.append(details)
+            self.last_army_dmg.append(f"Total Damage: {dmg} Breakdown: {b}")
+        
+        return target 
+
 
 def main():
     sampletree = build_tree() 
     units = UnitTracker(sampletree)
+    #for i in units.basis['Attack']['DamageRoll']['DamageType']['TYPE']: 
+    #    print(i)
     pp(sampletree)
     print(sampletree['drow1']['Attack']())
     print(sampletree['drow2']['Attack']())
@@ -530,11 +590,16 @@ def main():
     print(units)
     print(sampletree['drow2']['Attack'].dict_object['DamageRoll'].to_file(4))
     print(sampletree['drow2']['Attack'].to_file(4))
-    with open('test.txt', 'w') as fout:
+    units.attack('drow2', 'drow1')
+    units.attack('drow2', 'drow2')
+    units.attack('drowarmy1', 'drowarmy1')
+    with open('test.sfs', 'w') as fout:
         print(units.to_file(basis), file=fout)
-    units2 = UnitTracker(build_tree('test.txt'))
+    units2 = UnitTracker(build_tree('test.sfs'))
     print(units2)
-    units2.save(basis, 'SAMPLE.txt')
+    units.save(basis, 'SAMPLE.sfs')
+    print(units.get_damage_type("Piercing"))
+    print(units.basis["Attack"]['Button'])
     
     
 if __name__ == "__main__":
