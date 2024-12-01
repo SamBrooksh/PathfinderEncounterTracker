@@ -121,3 +121,16 @@ Army Breakdown:
 Army Damage: 
 Unit Breakdown: BROWSER Deals damage to Test: Received 2 Bludgeoning (2) Test at 1 remaining
 Unit Damage: Total Damage: 2 Breakdown: 2 (2) Bludgeoning 
+Army Breakdown: 
+Army Damage: 
+Unit Breakdown: BROWSER Deals damage to Drow Warrior: Received 3 Fire (3) Reduced by 3  Drow Warrior at 62 remaining
+Unit Damage: Total Damage: 0 Breakdown: 3 (3) Fire 
+Army Breakdown: 
+Army Damage: 
+Unit Breakdown: BROWSER Deals damage to Drow Warrior: Received 3 Fire (3) Reduced by 3  Drow Warrior at 62 remaining
+Unit Damage: Total Damage: 0 Breakdown: 3 (3) Fire 
+Army Breakdown: Army Drow Excursion attacks Drow Excursion: Deals 7 * 1 (7): Remaining HP: 43
+Army Damage: Total Damage: 7 Breakdown: 7 * 1
+Unit Breakdown: ATTACK MISSED: 14 vs 15 - Drow Warrior vs Drow Warrior
+ATTACK MISSED: 22 vs 30 - Drow Warrior vs Drow Warrior
+Unit Damage: 

@@ -18,7 +18,8 @@ minimum1:
         Reflex: 0
         Fortitude: 0
         Will: 0
-    CurrentHp: 1
+    CurrentHp: 5
+    AC: 10
     Resistances:
         Bludgeoning: 0
         Piercing: 0
@@ -28,7 +29,6 @@ minimum1:
         Cold: 0
         Electricity: 0
         Acid: 0
-    AC: 10
 drow1:
     Name: Drow Warrior
     CR: 10
@@ -44,7 +44,7 @@ drow1:
         Will: 10
         Reflex: 10
     MaxHp: 100
-    CurrentHp: 62
+    CurrentHp: 100
     AC: 15
     Attack:
         Weapon: Sword
@@ -114,7 +114,8 @@ drowarmy1:
         Reflex: 0
         Fortitude: 0
         Will: 0
-    CurrentHp: 37
+    CurrentHp: 43
+    AC: 10
     Resistances:
         Bludgeoning: 0
         Piercing: 0
@@ -124,5 +125,33 @@ drowarmy1:
         Cold: 0
         Electricity: 0
         Acid: 0
+drowarmy1:
+    Name: Drow Excursion
+    CR: 13
+    ArmyKills:
+        Bonus: 10
+        BaseDamageMultiplier: 3
+        Name: Hail of Arrows
+    MaxHp: 50
+    Stats:
+        STR: 10
+        INT: 10
+        WIS: 10
+        DEX: 10
+        CHA: 10
+        CON: 10
+        Reflex: 0
+        Fortitude: 0
+        Will: 0
+    CurrentHp: 43
     AC: 10
+    Resistances:
+        Bludgeoning: 0
+        Piercing: 0
+        Slashing: 0
+        Magic: 0
+        Fire: 0
+        Cold: 0
+        Electricity: 0
+        Acid: 0
 

@@ -306,6 +306,9 @@ def complete_unit(base_dict: dict, add_key: str, to_add: dict, number:int = 0):
                 elif sub_tree_var == 'String':
                     generator = basis[sub_key]['GENERATE']
                     sub_tree_var = {'TYPE': 'String'}
+                elif issubclass(sub_tree_var, Enum):
+                    generator = basis[sub_key]['GENERATE']
+                    sub_tree_var = {'TYPE':sub_tree_var}
 
             to_add = add_base_on_type(to_add, sub_tree_var, sub_key, generator, number)
     if not all_reqs:
@@ -432,6 +435,12 @@ class UnitTracker:
             if enums.lower() == e.name.lower():
                 return True
         return False
+    
+    def display(self, unit:dict, key: str)->str:
+        #return key
+        print('NEW DISPLAY')
+        print(str(unit[key]).replace('{', '').replace('}', '').replace('\n', ' ').replace("'", "").replace('"', ''))
+        return str(unit[key]).replace('{', '').replace('}', '').replace('\n', ' ').replace("'", "").replace('"', '')
     
     def dict_to_file(unit_dict: dict, basis: dict)->str:
         string = ""
