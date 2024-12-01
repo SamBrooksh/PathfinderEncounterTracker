@@ -299,6 +299,13 @@ def complete_unit(base_dict: dict, add_key: str, to_add: dict, number:int = 0):
                 generator = add_dict({}, sub_key, {}, number)
                 to_add[sub_key] = generator[sub_key]
                 continue
+            else:
+                if sub_tree_var == 'Int':
+                    generator = basis[sub_key]['GENERATE']
+                    sub_tree_var = {'TYPE': 'Int'}
+                elif sub_tree_var == 'String':
+                    generator = basis[sub_key]['GENERATE']
+                    sub_tree_var = {'TYPE': 'String'}
 
             to_add = add_base_on_type(to_add, sub_tree_var, sub_key, generator, number)
     if not all_reqs:

@@ -18,7 +18,7 @@ minimum1:
         Reflex: 0
         Fortitude: 0
         Will: 0
-    CurrentHp: 3
+    CurrentHp: 1
     Resistances:
         Bludgeoning: 0
         Piercing: 0
@@ -28,6 +28,7 @@ minimum1:
         Cold: 0
         Electricity: 0
         Acid: 0
+    AC: 10
 drow1:
     Name: Drow Warrior
     CR: 10
@@ -43,7 +44,7 @@ drow1:
         Will: 10
         Reflex: 10
     MaxHp: 100
-    CurrentHp: 76
+    CurrentHp: 62
     AC: 15
     Attack:
         Weapon: Sword
@@ -113,7 +114,7 @@ drowarmy1:
         Reflex: 0
         Fortitude: 0
         Will: 0
-    CurrentHp: 45
+    CurrentHp: 37
     Resistances:
         Bludgeoning: 0
         Piercing: 0
@@ -123,4 +124,5 @@ drowarmy1:
         Cold: 0
         Electricity: 0
         Acid: 0
+    AC: 10
 

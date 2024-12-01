@@ -43,7 +43,7 @@ drow1:
         Will: 10
         Reflex: 10
     MaxHp: 100
-    CurrentHp: 76
+    CurrentHp: 62
     AC: 15
     Attack:
         Weapon: Sword
@@ -113,7 +113,7 @@ drowarmy1:
         Reflex: 0
         Fortitude: 0
         Will: 0
-    CurrentHp: 45
+    CurrentHp: 37
     Resistances:
         Bludgeoning: 0
         Piercing: 0
@@ -141,7 +141,7 @@ drowarmy1:
         Reflex: 0
         Fortitude: 0
         Will: 0
-    CurrentHp: 45
+    CurrentHp: 37
     Resistances:
         Bludgeoning: 0
         Piercing: 0
