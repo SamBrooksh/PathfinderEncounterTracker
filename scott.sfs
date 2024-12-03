@@ -1,0 +1,34 @@
+unit:
+    Name: Dwarf
+    CR: 15
+    Attack:
+        Weapon: Sword
+        MeleeRanged: Melee
+        BaseType: Bludgeoning
+        AttackBonus: 0
+        DamageRoll:
+            Value:1
+    MaxHp: 12
+    Alliance: Neutral
+    Stats:
+        STR: 100
+        INT: 10
+        WIS: 10
+        DEX: 10
+        CHA: 10
+        CON: 10
+        Reflex: 0
+        Fortitude: 0
+        Will: 0
+    CurrentHp: 6
+    AC: 10
+    Resistances:
+        Bludgeoning: 0
+        Piercing: 0
+        Slashing: 0
+        Magic: 0
+        Fire: 0
+        Cold: 0
+        Electricity: 0
+        Acid: 0
+

@@ -1,42 +1,23 @@
-<!DOCTYPE html>
-<html>
- 
-<head>
-    <title>FlaskTest</title>
-</head>
- 
-<body>
-    <table>
+{% extends 'index.html' %}
+{% block mainblock %}
+    <table style="empty-cells: hide;">
         <div><!-- LAST RESULT -->
             RESULT: 
             {% block result %}
             {% endblock %}
         </div>
         <!-- This is the Units Section!-->
-        <tr>
-            <th>1</th>
-            <th>2</th>
-            <th>3</th>
-            <th>4</th>
-            <th>5</th>
-            <th>6</th>
-            <th>7</th>
-            <th>8</th>
-            <th>9</th>
-            <th>10</th>
-            
-
-        </tr>
+         <br><br>
         {% for name, value in units.units.items() %}
-        <tr>
+        <tr height="100px">
             <td>Name: {{units.units[name]['Name']}} <h5>Tag: {{name}}</h5></td>
             
             <td>
                 HP: {{units.units[name]['CurrentHp']}} / {{units.units[name]['MaxHp']}}
                 <form method="post">
                     <input type="submit" value="Modify Health">
-                    <input type="text" value="{{name}}" name="name" id="{{name}}" style="display:none">
-                    <input type="number" name="modify_amount" id="modify_amount" required> 
+                    <input type="text" value="{{name}}" name="name" id="{{name}}" style="display:none;">
+                    <input type="number" name="modify_amount" id="modify_amount" style="width: 50px;" required> 
                     <div>
                         <select id="type" name="type" required>
                         {% for type in units.basis['Attack']['DamageRoll']['DamageType']['TYPE'] %}
@@ -45,45 +26,32 @@
                         </select>
                     </div>
                 </form>
-            </td>
-        </tr>
-        <tr>    
+            </td>   
                 {% for sub_key, sub_value in units.units[name]|dictsort %}
-                <td>
                     {% if 'Button' in units.basis[sub_key] and units.basis[sub_key]['Button'] == 'Display' %}
-                        <button onclick=toggle("{{name}}{{sub_key}}")>{{sub_key}}</button>
-                        <div id="{{name}}{{sub_key}}" style="display:none;">
-                            -
-                            {% if sub_value.__class__.__name__ == 'dict' %}
-                                {% for dict_item in sub_value|dictsort %}
-                                    {{ dict_item[0] }} : {{ dict_item[1] }} -
-                                {% endfor %}
-                            {% else %}
-                                {{ sub_value }}
-                            {% endif %}
-                        </div>
-                        <button onclick="popup('{{units.display(units.units[name], sub_key)}}')">Testing</button>
+                        <td>
+                            <button onclick="popup('{{units.display(units.units[name], sub_key)}}')">{{sub_key}}</button>
+                        </td>
+                
                     {% elif units.basis[sub_key]['TYPE'] == 'Object' %}
+                    
                         <!-- Objects-->
                         {% if units.basis[sub_key]['Button'] == 'Callable' %}
-                            <form method="post" action="{{ url_for(request.endpoint, **request.view_args) }}">
-                                <input type="text" value="{{sub_key}}" id="CallObject" name="CallObject" style="display: none;">
-                                <input type="text" value="{{name}}" id="name" name="name" style="display: none;">
-                                <input type="submit" value="CALL {{sub_key}}" name="Callable">
-                            </form>
-                            
+                            <td>
+                                <form method="post" action="{{ url_for(request.endpoint, **request.view_args) }}">
+                                    <input type="text" value="{{sub_key}}" id="CallObject" name="CallObject" style="display: none;">
+                                    <input type="text" value="{{name}}" id="name" name="name" style="display: none;">
+                                    <input type="submit" value="CALL {{sub_key}}" name="Callable">
+                                </form>
+                            </td>
                         {% endif %}
-                        <button onclick=toggle("{{name}}{{sub_key}}")>{{sub_key}}</button>
-                        <div id="{{name}}{{sub_key}}"style="display:none;">
-                            {% for object_key in units.units[name][sub_key].dict_object %}
-                                <p>{{object_key}} : {{units.units[name][sub_key].dict_object[object_key]}}</p>
-                            {% endfor %}
-                        </div>
-                        
+                        <td>
+                            <button onclick="popup('{{units.display(units.units[name], sub_key)}}')">{{sub_key}}</button>
+                        </td>
                     {% elif not units.basis[sub_key]['REQUIRED'] and sub_key != "CurrentHp" %}
-                        <p>{{sub_key}} : {{sub_value}}</p>
+                        <td>{{sub_key}} : {{sub_value}}</td>
                     {% endif %}
-                </td>
+                
                 {% endfor %}
         </tr>
         {% endfor %}
@@ -108,6 +76,4 @@
     }
 </script>
         
-</body>
-
-</html>
+{% endblock %}

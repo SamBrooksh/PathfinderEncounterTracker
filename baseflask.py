@@ -1,7 +1,15 @@
 from flask import Flask, redirect, url_for, request, render_template
 from fileloader import build_tree, UnitTracker
+from keybuilder import load_keys
 import os
+from enum import EnumType
 app = Flask(__name__)
+
+def is_enum(obj):
+    #print(f"{obj} : {isinstance(obj, EnumType)} : {type(obj)}")
+    return isinstance(obj, EnumType)
+
+app.jinja_env.filters['is_enum'] = is_enum
 
 @app.route('/file/<file_name>', methods=['GET', 'POST'])    
 def file(file_name):
@@ -35,10 +43,14 @@ def file(file_name):
         print(result)
         return render_template("result.html", units = units, result = result)
 
-@app.route('/<file_name>', methods=['POST', 'GET'])
-def mod_health(file_name):
-    
-    return request.base_url
+@app.route('/new_encounter', methods=['POST', 'GET'])
+def new_encounter():
+    if request.method == 'GET':
+        return render_template('new_encounter.html', basis=load_keys())
+    else:
+        print("Create and Save")
+        print(request.form['value'])
+        return render_template('new_encounter.html', basis=load_keys())
 
 @app.route('/')
 def index():
@@ -55,6 +67,20 @@ def go_to_file():
     if request.method == 'GET':
         print(request.form)
     return '/'
+
+@app.route('/testing', methods=['GET', 'POST'])
+def test():
+    basis = load_keys()
+    if request.method == 'POST':
+        units = {}
+        unit_id = 0
+        print(request.form)
+        for key in basis:
+            
+            print(f"{key} : {request.form.getlist(key)}")
+
+        #print(request.form.getlist('Gear[]'))
+    return render_template('new_encounter_guarantee.html', basis=basis)
 
 if __name__ == '__main__':
     app.run(debug=True)

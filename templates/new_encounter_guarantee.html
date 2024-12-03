@@ -1,0 +1,96 @@
+{% extends 'index.html' %}
+
+{% block mainblock %}
+
+{% block errormessage %}
+{% endblock %}
+    <form method="post">
+        <input type="submit">
+        <input type="button" onclick="add_unit()" value="Add unit">
+        <table id="table">
+            
+        </table>
+    </form>
+
+    <template id="row">
+        <tr style="vertical-align:top">
+            {% for key in basis %}
+            <td><label for="{{basis[key]['KEY']}}">{{basis[key]['KEY']}}</label>
+                {% if basis[key]['TYPE'] in ['Int', 'String'] %}
+                <input {% if basis[key]['TYPE']  == 'Int' %} type="number"
+                    {% elif basis[key]['TYPE'] == 'String' %} type="text"
+                    {% endif %}
+                    {% if 'REQUIRED' in basis[key] %} required 
+                    {% endif %} 
+                id="{{basis[key]['KEY']}}" name="{{basis[key]['KEY']}}">
+                {% elif basis[key]['TYPE'] | is_enum %}
+                <select id="{{basis[key]['TYPE'].__name__}}" name="{{basis[key]['TYPE'].__name__}}">
+                {% for choice in basis[key]['TYPE'] %}
+                    <option value="{{choice.name}}">{{choice.name}}</option>
+                {% endfor %}
+                {{basis[key]['TYPE'].value}}
+                </select>
+                {% elif basis[key]['TYPE'] == "List" %}
+                    <div id="{{basis[key]['KEY']}}">
+                        <input name="{{basis[key]['KEY']}}[]" type="text">
+                    </div>
+                    <button type="button" onclick="add_form('{{basis[key]['KEY']}}'); return false">Add</button>
+                {% elif basis[key]['TYPE'] == "Dictionary" %}
+                    {% for sub_key in basis[key] %}
+                        {% if sub_key not in ['KEY', 'TYPE', 'Button', 'GENERATE'] %}
+                        <label for="{{basis[key]['KEY']}}-{{basis[key][sub_key]['KEY']}}">{{basis[key][sub_key]['KEY']}}</label>
+                        <input name="{{basis[key]['KEY']}}-{{basis[key][sub_key]['KEY']}}" 
+                            {% if basis[key][sub_key]['TYPE']  == 'Int' %} type="number"
+                            {% elif basis[key][sub_key]['TYPE'] == 'String' %} type="text"
+                            {% endif %}
+                            {% if 'REQUIRED' in basis[key][sub_key] %} required 
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    Pass
+
+                {% endif %}
+
+            </td>
+            {% endfor %}
+        </tr>
+    </template>
+<script>
+    var count = 0;
+    function add_form(element)
+    {
+        var arg = document.getElementById(element);
+        var newtag = document.createElement('input');
+        newtag.type = "text";
+        newtag.name = element+"[]";
+        arg.appendChild(newtag);
+    }
+
+    function add_unit()
+    {
+        var to_add = document.getElementById("table");
+        var template_var = document.getElementById("row");
+        var clone = template_var.content.cloneNode(true);
+        clone.id = "unit"+count+":"+clone.id;
+        let collection = clone.querySelectorAll("input");
+        for (let i = 0; i < collection.length; i++)
+        {
+            collection[i].id = "unit"+count+":"+collection[i].id;
+            collection[i].name = "unit"+count+":"+collection[i].name;
+        }
+        let collection2 = clone.querySelectorAll("select");
+        for (let i = 0; i < collection2.length; i++)
+        {
+            collection2[i].id = "unit"+count+":"+collection2[i].id;
+            collection2[i].name = "unit"+count+":"+collection2[i].name;
+        }
+        
+        console.log(clone);
+        to_add.appendChild(clone);
+        count += 1;
+        console.log(count);
+    }
+
+</script>
+{% endblock %}

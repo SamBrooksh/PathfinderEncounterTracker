@@ -1,11 +1,22 @@
+<!DOCTYPE html>
 <html>
+   <head></head>
+   <nav>
+      <ul>
+         <li><a href="{{url_for('index')}}" >Main Menu</a></li>
+         <li><a href="{{url_for('new_encounter')}}">New Encounter</a></li>
+      </ul>
+   </nav>
    <body>
+      {% block mainblock %}
+
       <p>Choose Encounter:</p>
       <form>   
          {% for file in files %}
             <br><input type="submit" formaction="/file/{{file}}" value = "{{file}}"></button>
          {% endfor %}
       </form>
-         
+      {% endblock %}
+
    </body>
 </html>

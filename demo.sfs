@@ -3,7 +3,7 @@ drow1:
     CR: 10
     Alliance: Friendly
     MaxHp: 100
-    CurrentHp: 49
+    CurrentHp: -4
     AC: 15
     Attack:
         Weapon: Sword
@@ -63,4 +63,5 @@ drow2:
         Cold: 0
         Electricity: 0
         Acid: 0
+    Alliance: Neutral
 

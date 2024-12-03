@@ -1,0 +1,47 @@
+{% extends 'index.html' %}
+
+{% block mainblock %}
+<table>
+    <tr>
+        <td style="vertical-align:top">
+        <form method="post">
+            <textarea id="value" name="value" rows="30" cols="90">Insert here</textarea>
+            <input type="submit" value="Submit">
+        </form>
+        </td>
+        <td>
+            {% for key in basis %}
+                {% if basis[key] is mapping %}    
+                    <ul> <button onclick="toggle('{{key}}{{sub_key}}')">{{key}} </button>
+                        <div id="{{key}}{{sub_key}}" style="display:none;">
+                        {% for sub_key in basis[key] %}
+                            {% if sub_key != 'KEY' %}
+                                <br>{{sub_key}} : {{basis[key][sub_key]}}
+                            {% endif %}
+                        {% endfor %}
+                        </div>
+                    </ul>
+                {% else %}
+                    <p>{{key}} : {{basis[key]}}</p>
+                {% endif %}
+            {% endfor %}
+        </td>
+    </tr>
+</table>
+<script>
+    function toggle(id) {
+        var tag = document.getElementById(id);
+        if (tag.style.display == "inline")
+        {
+            tag.style.display = "none";
+        }
+        else
+        {
+            tag.style.display = "inline";
+        }
+    }
+    function popup(message) {
+        alert(message);
+    }
+</script>
+{% endblock %}
