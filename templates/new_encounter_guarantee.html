@@ -4,16 +4,19 @@
 
 {% block errormessage %}
 {% endblock %}
-    <form method="post">
+    <form method="post" onload="load()">
         <input type="submit">
-        <input type="button" onclick="add_unit()" value="Add unit">
+        <input type="button" onclick="add_unit()" value="Add unit" id="afterbuttons">
+        <label for="file">Insert File</label>
+        <input id="file" type="text" name="file">
         <table id="table">
             
         </table>
     </form>
 
     <template id="row">
-        <tr style="vertical-align:top">
+        <tr class="rows">
+            <td id="change"></td>
             {% for key in basis %}
             <td><label for="{{basis[key]['KEY']}}">{{basis[key]['KEY']}}</label>
                 {% if basis[key]['TYPE'] in ['Int', 'String'] %}
@@ -34,7 +37,7 @@
                     <div id="{{basis[key]['KEY']}}">
                         <input name="{{basis[key]['KEY']}}[]" type="text">
                     </div>
-                    <button type="button" onclick="add_form('{{basis[key]['KEY']}}'); return false">Add</button>
+                    <button type="button" name="{{basis[key]['KEY']}}">Add</button>
                 {% elif basis[key]['TYPE'] == "Dictionary" %}
                     {% for sub_key in basis[key] %}
                         {% if sub_key not in ['KEY', 'TYPE', 'Button', 'GENERATE'] %}
@@ -47,9 +50,46 @@
                             {% endif %}
                         {% endif %}
                     {% endfor %}
-                {% else %}
-                    Pass
-
+                {% elif basis[key]['TYPE'] == 'Object' %}
+                <!-- Is some sort of object -->
+                    {% for sub_key in basis[key] %}
+                        <label for="{{basis[key][sub_key]['KEY']}}">{{basis[key][sub_key]['KEY']}}</label>
+                        {% if basis[key][sub_key]['TYPE'] in ['Int', 'String'] %}
+                        <input {% if basis[key][sub_key]['TYPE']  == 'Int' %} type="number"
+                            {% elif basis[key][sub_key]['TYPE'] == 'String' %} type="text"
+                            {% endif %}
+                            {% if 'REQUIRED' in basis[key][sub_key] %} required 
+                            {% endif %} 
+                        id="{{basis[key][sub_key]['KEY']}}" name="{{basis[key][sub_key]['KEY']}}">
+                        {% elif basis[key][sub_key]['TYPE'] | is_enum %}
+                            <select id="{{basis[key][sub_key]['TYPE'].__name__}}" name="{{basis[key][sub_key]['TYPE'].__name__}}">
+                            {% for choice in basis[key][sub_key]['TYPE'] %}
+                                <option value="{{choice.name}}">{{choice.name}}</option>
+                            {% endfor %}
+                            {{basis[key][sub_key]['TYPE'].value}}
+                            </select>
+                        
+                        {% elif basis[key][sub_key]['TYPE'] == 'Object' %}
+                            {% for tertiary in basis[key][sub_key] %}
+                                <label for="{{basis[key][sub_key][tertiary]['KEY']}}">{{basis[key][sub_key][tertiary]['KEY']}}</label>
+                                {% if basis[key][sub_key][tertiary]['TYPE'] in ['Int', 'String'] %}
+                                <input {% if basis[key][sub_key][tertiary]['TYPE']  == 'Int' %} type="number"
+                                    {% elif basis[key][sub_key][tertiary]['TYPE'] == 'String' %} type="text"
+                                    {% endif %}
+                                    {% if 'REQUIRED' in basis[key][sub_key][tertiary] %} required 
+                                    {% endif %} 
+                                id="{{basis[key][sub_key][tertiary]['KEY']}}" name="{{basis[key][sub_key][tertiary]['KEY']}}">
+                                {% elif basis[key][sub_key][tertiary]['TYPE'] | is_enum %}
+                                    <select id="{{basis[key][sub_key][tertiary]['TYPE'].__name__}}" name="{{basis[key][sub_key][tertiary]['TYPE'].__name__}}">
+                                    {% for choice in basis[key][sub_key][tertiary]['TYPE'] %}
+                                        <option value="{{choice.name}}">{{choice.name}}</option>
+                                    {% endfor %}
+                                {{basis[key][sub_key][tertiary]['TYPE'].value}}
+                                </select>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %} 
+                    {% endfor %}
                 {% endif %}
 
             </td>
@@ -58,6 +98,10 @@
     </template>
 <script>
     var count = 0;
+    function load()
+    {
+        add_unit();
+    }
     function add_form(element)
     {
         var arg = document.getElementById(element);
@@ -76,21 +120,58 @@
         let collection = clone.querySelectorAll("input");
         for (let i = 0; i < collection.length; i++)
         {
-            collection[i].id = "unit"+count+":"+collection[i].id;
+            //collection[i].id = "unit"+count+":"+collection[i].id;
             collection[i].name = "unit"+count+":"+collection[i].name;
         }
+
         let collection2 = clone.querySelectorAll("select");
         for (let i = 0; i < collection2.length; i++)
         {
-            collection2[i].id = "unit"+count+":"+collection2[i].id;
+            //collection2[i].id = "unit"+count+":"+collection2[i].id;
             collection2[i].name = "unit"+count+":"+collection2[i].name;
         }
-        
-        console.log(clone);
-        to_add.appendChild(clone);
-        count += 1;
-        console.log(count);
-    }
 
+        let collection4 = clone.querySelectorAll("div");
+        for (let i = 0; i < collection4.length; i++)
+        {
+            collection4[i].id = "unit"+count+":"+collection4[i].id;
+        }
+
+        let collection3 = clone.querySelectorAll("button");
+        for (let i = 0; i < collection3.length; i++)
+        {
+            //collection3[i].id = "unit"+count+":"+collection3[i].id;
+            collection3[i].name = "unit"+count+":"+collection3[i].name;
+            collection3[i].addEventListener("click", function() {add_form(collection3[i].name)});
+            console.log(collection3[i].name)
+        }
+        let row = clone.querySelectorAll('tr');
+        for (let i = 0; i < row.length; i++)
+        {
+            row[i].id = "unit"+count;
+        }
+        var toggle_button = document.createElement("button");
+        toggle_button.innerHTML = "unit"+count;
+        //toggle_button.addEventListener("onclick", toggle("unit"+count));
+        to_add.appendChild(clone);
+        var str = "<button type='button' onclick=toggle('unit"+count+"')>unit"+count+"</button>";
+        document.getElementById("table").insertAdjacentHTML("beforebegin", str);
+        document.getElementById("unit"+count).insertAdjacentHTML("afterBegin", "<td>unit"+count+"</td>");
+        
+        
+        count += 1;
+    }
+    function toggle(element)
+    {
+        var t = document.getElementById(element);
+        if (t.style.display === "none")
+        {
+            t.style.display = "block";   
+        }
+        else {
+            t.style.display = "none";
+        }
+    }
+    window.onload = load;
 </script>
 {% endblock %}
