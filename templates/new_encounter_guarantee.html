@@ -4,11 +4,11 @@
 
 {% block errormessage %}
 {% endblock %}
-    <form method="post" onload="load()">
+    <form method="post" onload="load()" action="submit">
         <input type="submit">
         <input type="button" onclick="add_unit()" value="Add unit" id="afterbuttons">
         <label for="file">Insert File</label>
-        <input id="file" type="text" name="file">
+        <input id="file" type="text" name="file" value="{{data['file']}}">
         <table id="table">
             
         </table>
@@ -53,16 +53,14 @@
                 {% elif basis[key]['TYPE'] == 'Object' %}
                 <!-- Is some sort of object -->
                     {% for sub_key in basis[key] %}
-                        <label for="{{basis[key][sub_key]['KEY']}}">{{basis[key][sub_key]['KEY']}}</label>
+                        <label for="{{basis[key]['KEY']}}-{{basis[key][sub_key]['KEY']}}">{{basis[key][sub_key]['KEY']}}</label>
                         {% if basis[key][sub_key]['TYPE'] in ['Int', 'String'] %}
                         <input {% if basis[key][sub_key]['TYPE']  == 'Int' %} type="number"
                             {% elif basis[key][sub_key]['TYPE'] == 'String' %} type="text"
                             {% endif %}
-                            {% if 'REQUIRED' in basis[key][sub_key] %} required 
-                            {% endif %} 
-                        id="{{basis[key][sub_key]['KEY']}}" name="{{basis[key][sub_key]['KEY']}}">
+                        id="{{basis[key]['KEY']}}-{{basis[key][sub_key]['KEY']}}" name="{{basis[key]['KEY']}}-{{basis[key][sub_key]['KEY']}}">
                         {% elif basis[key][sub_key]['TYPE'] | is_enum %}
-                            <select id="{{basis[key][sub_key]['TYPE'].__name__}}" name="{{basis[key][sub_key]['TYPE'].__name__}}">
+                            <select id="{{basis[key]['KEY']}}-{{basis[key][sub_key]['TYPE'].__name__}}" name="{{basis[key]['KEY']}}-{{basis[key][sub_key]['TYPE'].__name__}}">
                             {% for choice in basis[key][sub_key]['TYPE'] %}
                                 <option value="{{choice.name}}">{{choice.name}}</option>
                             {% endfor %}
@@ -76,11 +74,9 @@
                                 <input {% if basis[key][sub_key][tertiary]['TYPE']  == 'Int' %} type="number"
                                     {% elif basis[key][sub_key][tertiary]['TYPE'] == 'String' %} type="text"
                                     {% endif %}
-                                    {% if 'REQUIRED' in basis[key][sub_key][tertiary] %} required 
-                                    {% endif %} 
                                 id="{{basis[key][sub_key][tertiary]['KEY']}}" name="{{basis[key][sub_key][tertiary]['KEY']}}">
                                 {% elif basis[key][sub_key][tertiary]['TYPE'] | is_enum %}
-                                    <select id="{{basis[key][sub_key][tertiary]['TYPE'].__name__}}" name="{{basis[key][sub_key][tertiary]['TYPE'].__name__}}">
+                                    <select id="{{basis[key][sub_key]['KEY']}}-{{basis[key][sub_key][tertiary]['KEY']}}-{{basis[key][sub_key][tertiary]['TYPE'].__name__}}" name="{{basis[key][sub_key]['KEY']}}-{{basis[key][sub_key][tertiary]['KEY']}}-{{basis[key][sub_key][tertiary]['TYPE'].__name__}}">
                                     {% for choice in basis[key][sub_key][tertiary]['TYPE'] %}
                                         <option value="{{choice.name}}">{{choice.name}}</option>
                                     {% endfor %}

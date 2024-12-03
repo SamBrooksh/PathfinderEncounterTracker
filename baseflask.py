@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, request, render_template
+from flask import Flask, redirect, url_for, request, render_template, jsonify
 from fileloader import build_tree, UnitTracker
 from keybuilder import load_keys
 import os
@@ -68,6 +68,12 @@ def go_to_file():
         print(request.form)
     return '/'
 
+@app.route('/submit', methods=['POST'])
+def submit():
+    data = request.form
+    print(data)
+    return jsonify({'data' : data})
+
 @app.route('/testing', methods=['GET', 'POST'])
 def test():
     basis = load_keys()
@@ -78,6 +84,8 @@ def test():
         for key in basis:
             
             print(f"{key} : {request.form.getlist(key)}")
+        print("Test")
+        return render_template('new_encounter_guarantee.html', basis=basis, data=jsonify(request.form))
 
         #print(request.form.getlist('Gear[]'))
     return render_template('new_encounter_guarantee.html', basis=basis)
