@@ -2,13 +2,12 @@
 
 {% block mainblock %}
 
-{% block errormessage %}
-{% endblock %}
-    <form method="post" onload="load()" action="submit">
+{{error}}
+    <form method="post" onload="load()">
         <input type="submit">
         <input type="button" onclick="add_unit()" value="Add unit" id="afterbuttons">
         <label for="file">Insert File</label>
-        <input id="file" type="text" name="file" value="{{data['file']}}">
+        <input id="file" type="text" name="file" required>
         <table id="table">
             
         </table>
@@ -35,14 +34,14 @@
                 </select>
                 {% elif basis[key]['TYPE'] == "List" %}
                     <div id="{{basis[key]['KEY']}}">
-                        <input name="{{basis[key]['KEY']}}[]" type="text">
+                        <input name="{{basis[key]['KEY']}}[]" id="{{basis[key]['KEY']}}1" type="text">
                     </div>
                     <button type="button" name="{{basis[key]['KEY']}}">Add</button>
                 {% elif basis[key]['TYPE'] == "Dictionary" %}
                     {% for sub_key in basis[key] %}
                         {% if sub_key not in ['KEY', 'TYPE', 'Button', 'GENERATE'] %}
                         <label for="{{basis[key]['KEY']}}-{{basis[key][sub_key]['KEY']}}">{{basis[key][sub_key]['KEY']}}</label>
-                        <input name="{{basis[key]['KEY']}}-{{basis[key][sub_key]['KEY']}}" 
+                        <input name="{{basis[key]['KEY']}}-{{basis[key][sub_key]['KEY']}}" id="{{basis[key]['KEY']}}-{{basis[key][sub_key]['KEY']}}"
                             {% if basis[key][sub_key]['TYPE']  == 'Int' %} type="number"
                             {% elif basis[key][sub_key]['TYPE'] == 'String' %} type="text"
                             {% endif %}
@@ -94,16 +93,51 @@
     </template>
 <script>
     var count = 0;
+    var data = {{data | tojson}};
+    var temp = "1";
     function load()
     {
         add_unit();
+        if (data === null)
+            return;
+        while ("unit"+count+":Name" in data)
+        {
+            add_unit();
+        }
+        for (key in data)
+        {
+            if (key.includes('[]'))
+            {
+                
+                var sub = key.substring(0, key.length - 2);
+                for (value in data[key])
+                {
+                    var element = document.getElementById(sub+temp);
+                    element.value = data[key][value];
+                    temp += "1";
+                    if (value < data[key].length - 1)
+                    {
+                        add_form(sub, temp.length);
+                    }
+                }
+                temp = "1"
+             
+            }
+            else 
+            {
+                var find_element = document.getElementById(key);
+                find_element.value = data[key];
+            }
+        }
     }
-    function add_form(element)
+    function add_form(element, count=1)
     {
         var arg = document.getElementById(element);
         var newtag = document.createElement('input');
         newtag.type = "text";
         newtag.name = element+"[]";
+        var temp = "1".repeat(count);
+        newtag.id = arg.id + temp;
         arg.appendChild(newtag);
     }
 
@@ -116,14 +150,14 @@
         let collection = clone.querySelectorAll("input");
         for (let i = 0; i < collection.length; i++)
         {
-            //collection[i].id = "unit"+count+":"+collection[i].id;
+            collection[i].id = "unit"+count+":"+collection[i].id;
             collection[i].name = "unit"+count+":"+collection[i].name;
         }
 
         let collection2 = clone.querySelectorAll("select");
         for (let i = 0; i < collection2.length; i++)
         {
-            //collection2[i].id = "unit"+count+":"+collection2[i].id;
+            collection2[i].id = "unit"+count+":"+collection2[i].id;
             collection2[i].name = "unit"+count+":"+collection2[i].name;
         }
 
@@ -136,10 +170,9 @@
         let collection3 = clone.querySelectorAll("button");
         for (let i = 0; i < collection3.length; i++)
         {
-            //collection3[i].id = "unit"+count+":"+collection3[i].id;
+            collection3[i].id = "unit"+count+":"+collection3[i].id;
             collection3[i].name = "unit"+count+":"+collection3[i].name;
             collection3[i].addEventListener("click", function() {add_form(collection3[i].name)});
-            console.log(collection3[i].name)
         }
         let row = clone.querySelectorAll('tr');
         for (let i = 0; i < row.length; i++)

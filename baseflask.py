@@ -78,17 +78,25 @@ def submit():
 def test():
     basis = load_keys()
     if request.method == 'POST':
+        error = "TEST ERROR"
         units = {}
-        unit_id = 0
-        print(request.form)
+        #print(request.form) 
         for key in basis:
-            
-            print(f"{key} : {request.form.getlist(key)}")
-        print("Test")
-        return render_template('new_encounter_guarantee.html', basis=basis, data=jsonify(request.form))
+            if basis[key]['TYPE'] == "List":
+                for item in request.form:
+                    if key in item:
+                        get_list = request.form.getlist(item)
+                        units[item] = get_list
+                        print(item)
+            #print(f"{key} : {request.form.getlist(key)}")
+        for key in request.form:
+            if key not in units:
+                units[key] = request.form[key]
+        print(units)
+        return render_template('new_encounter_guarantee.html', basis=basis, data=units, error=error)
 
         #print(request.form.getlist('Gear[]'))
-    return render_template('new_encounter_guarantee.html', basis=basis)
+    return render_template('new_encounter_guarantee.html', basis=basis, data=None, error="")
 
 if __name__ == '__main__':
     app.run(debug=True)
