@@ -120,23 +120,28 @@ def validate_dict(basis: dict, validating: dict)->tuple[bool, str]:
             for sub_key in built[key]:
                 try:
                     if isinstance(built[key][sub_key], dict):
-                        if any(built[key][sub_key]):
+                        print(f"{any(built[key][sub_key].values())}: {sub_key} : {built[key][sub_key]}")
+                        if any(built[key][sub_key].values()):
                             print(f"{" "*spacing}{sub_key}:", file=fout)
                             spacing += 4
                             for sub_sub_key in built[key][sub_key]:
                                 if isinstance(built[key][sub_key][sub_sub_key], dict):
-                                    print(f"{" "*spacing}{sub_sub_key}:", file=fout)
-                                    spacing += 4
-                                    for tertiary in built[key][sub_key][sub_sub_key]:
-                                        print(f"{" "*spacing}{tertiary}:{built[key][sub_key][sub_sub_key][tertiary]}", file=fout)
-                                    spacing -= 4
+                                    if any(built[key][sub_key][sub_sub_key].values()):
+                                        print(f"{" "*spacing}{sub_sub_key}:", file=fout)
+                                        spacing += 4
+                                        for tertiary in built[key][sub_key][sub_sub_key]:
+                                            print(f"{" "*spacing}{tertiary}:{built[key][sub_key][sub_sub_key][tertiary]}", file=fout)
+                                        spacing -= 4
                                 elif built[key][sub_key][sub_sub_key] == "":
                                     pass
                                 else:
                                     print(f"{" "*spacing}{sub_sub_key}:{built[key][sub_key][sub_sub_key]}", file=fout)
                             spacing -= 4
+                        else:
+                            print(f"Skipped {sub_key}")
                     else:
-                        print(f"{" "*spacing}{sub_key}:{built[key][sub_key]}", file=fout)
+                        if built[key][sub_key] != "":
+                            print(f"{" "*spacing}{sub_key}:{built[key][sub_key]}", file=fout)
                 except:
                     print("CRASH")
                     pass

@@ -27,7 +27,6 @@ unit0:
             Value:31d5
         Description:ads
     AC:12
-    ArmyKills:
     Resistances:
         Bludgeoning:2
         Piercing:3
@@ -37,3 +36,12 @@ unit0:
         Cold:7
         Electricity:8
         Acid:9
+unit1:
+        Gear:['asfd', 'fdsa', 'dfas']
+        Name:asd
+        Alliance:Hostile
+        MaxHp:5
+        Attack:
+            Weapon:sample
+            MeleeRanged:Melee
+            BaseType:Bludgeoning

@@ -10,7 +10,7 @@
         </form>
         </td>
         <td>
-            {% for key in basis %}
+            {% for key in basis %}  
                 {% if basis[key] is mapping %}    
                     <ul> <button onclick="toggle('{{key}}{{sub_key}}')">{{key}} </button>
                         <div id="{{key}}{{sub_key}}" style="display:none;">
