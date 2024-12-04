@@ -2,7 +2,9 @@ from flask import Flask, redirect, url_for, request, render_template, jsonify
 from fileloader import build_tree, UnitTracker
 from keybuilder import load_keys
 import os
+from copy import deepcopy
 from enum import EnumType
+from pprint import pprint
 app = Flask(__name__)
 
 def is_enum(obj):
@@ -74,6 +76,76 @@ def submit():
     print(data)
     return jsonify({'data' : data})
 
+def build_units(validating:dict)->dict:
+    units = {}
+    for key in validating:
+        new_unit = key.split(':')
+        if new_unit[0] not in units:
+            units[new_unit[0]] = {}
+        if '-' in new_unit[1]:
+            
+            sub_key = new_unit[1].split('-')
+            if len(sub_key) > 2:
+                if sub_key[-1] != "":
+                    units[new_unit[0]][sub_key[0]][sub_key[1]] =  {sub_key[2] : validating[key]}
+            else:
+                if sub_key[0] not in units[new_unit[0]]:
+                    units[new_unit[0]][sub_key[0]] = {}
+                units[new_unit[0]][sub_key[0]][sub_key[1]] = validating[key]
+        else:
+            units[new_unit[0]][new_unit[1]] = validating[key]
+
+    return units
+
+def validate_dict(basis: dict, validating: dict)->tuple[bool, str]:
+    #Returns any errors, and if it is successful
+    removes = []
+    for key in validating:
+        if '[]' in key:
+            removes.append(key)
+    to_save = validating.pop('file')
+    #if os.path.exists(to_save+".sfs"):
+    #    return False, "ENCOUNTER EXISTS ALREADY"
+    for i in removes:
+        validating.pop(i)
+    #READY TO CHECK
+    errors = []
+    built = build_units(validating)
+    pprint(built)
+    with open(to_save+".sfs", 'w') as fout:
+        spacing = 0
+        for key in built:
+            print(f"{key}:", file=fout)
+            spacing += 4
+            for sub_key in built[key]:
+                try:
+                    if isinstance(built[key][sub_key], dict):
+                        if any(built[key][sub_key]):
+                            print(f"{" "*spacing}{sub_key}:", file=fout)
+                            spacing += 4
+                            for sub_sub_key in built[key][sub_key]:
+                                if isinstance(built[key][sub_key][sub_sub_key], dict):
+                                    print(f"{" "*spacing}{sub_sub_key}:", file=fout)
+                                    spacing += 4
+                                    for tertiary in built[key][sub_key][sub_sub_key]:
+                                        print(f"{" "*spacing}{tertiary}:{built[key][sub_key][sub_sub_key][tertiary]}", file=fout)
+                                    spacing -= 4
+                                elif built[key][sub_key][sub_sub_key] == "":
+                                    pass
+                                else:
+                                    print(f"{" "*spacing}{sub_sub_key}:{built[key][sub_key][sub_sub_key]}", file=fout)
+                            spacing -= 4
+                    else:
+                        print(f"{" "*spacing}{sub_key}:{built[key][sub_key]}", file=fout)
+                except:
+                    print("CRASH")
+                    pass
+    try:
+        result = build_tree(to_save+".sfs")
+    except Exception as e:
+        print(e)
+    return False, str(errors)
+
 @app.route('/testing', methods=['GET', 'POST'])
 def test():
     basis = load_keys()
@@ -86,13 +158,15 @@ def test():
                 for item in request.form:
                     if key in item:
                         get_list = request.form.getlist(item)
+                        units[item[:-2]] = get_list
                         units[item] = get_list
-                        print(item)
-            #print(f"{key} : {request.form.getlist(key)}")
         for key in request.form:
             if key not in units:
                 units[key] = request.form[key]
-        print(units)
+        # Data Validate
+        valid, error = validate_dict(basis, deepcopy(units))
+
+
         return render_template('new_encounter_guarantee.html', basis=basis, data=units, error=error)
 
         #print(request.form.getlist('Gear[]'))

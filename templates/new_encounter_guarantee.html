@@ -68,14 +68,14 @@
                         
                         {% elif basis[key][sub_key]['TYPE'] == 'Object' %}
                             {% for tertiary in basis[key][sub_key] %}
-                                <label for="{{basis[key][sub_key][tertiary]['KEY']}}">{{basis[key][sub_key][tertiary]['KEY']}}</label>
+                                <label for="{{basis[key]['KEY']}}-{{basis[key][sub_key]['KEY']}}-{{basis[key][sub_key][tertiary]['KEY']}}">{{basis[key][sub_key][tertiary]['KEY']}}</label>
                                 {% if basis[key][sub_key][tertiary]['TYPE'] in ['Int', 'String'] %}
                                 <input {% if basis[key][sub_key][tertiary]['TYPE']  == 'Int' %} type="number"
                                     {% elif basis[key][sub_key][tertiary]['TYPE'] == 'String' %} type="text"
                                     {% endif %}
-                                id="{{basis[key][sub_key][tertiary]['KEY']}}" name="{{basis[key][sub_key][tertiary]['KEY']}}">
+                                id="{{basis[key]['KEY']}}-{{basis[key][sub_key]['KEY']}}-{{basis[key][sub_key][tertiary]['KEY']}}" name="{{basis[key]['KEY']}}-{{basis[key][sub_key]['KEY']}}-{{basis[key][sub_key][tertiary]['KEY']}}">
                                 {% elif basis[key][sub_key][tertiary]['TYPE'] | is_enum %}
-                                    <select id="{{basis[key][sub_key]['KEY']}}-{{basis[key][sub_key][tertiary]['KEY']}}-{{basis[key][sub_key][tertiary]['TYPE'].__name__}}" name="{{basis[key][sub_key]['KEY']}}-{{basis[key][sub_key][tertiary]['KEY']}}-{{basis[key][sub_key][tertiary]['TYPE'].__name__}}">
+                                    <select id="{{basis[key]['KEY']}}-{{basis[key][sub_key]['KEY']}}-{{basis[key][sub_key][tertiary]['KEY'].__name__}}" name="{{basis[key]['KEY']}}-{{basis[key][sub_key]['KEY']}}-{{basis[key][sub_key][tertiary]['KEY'].__name__}}">
                                     {% for choice in basis[key][sub_key][tertiary]['TYPE'] %}
                                         <option value="{{choice.name}}">{{choice.name}}</option>
                                     {% endfor %}
