@@ -1,12 +1,13 @@
 {% extends 'index.html' %}
 {% block mainblock %}
+
+    <!-- This is the Units Section!-->
     <table style="empty-cells: hide;">
         <div><!-- LAST RESULT -->
             RESULT: 
             {% block result %}
             {% endblock %}
         </div>
-        <!-- This is the Units Section!-->
          <br><br>
         {% for name, value in units.units.items() %}
         <tr height="100px">
@@ -57,6 +58,53 @@
         {% endfor %}
     </table>    
 <!-- This will be the army section!-->
+
+    <table style="empty-cells: hide;">
+        <br><br>
+        {% for name, value in units.army_units.items() %}
+        <tr height="100px">
+            <td>Name: {{units.army_units[name]['Name']}} <h5>Tag: {{name}}</h5></td>
+            
+            <td>
+                HP: {{units.army_units[name]['CurrentHp']}} / {{units.army_units[name]['MaxHp']}}
+                <form method="post">
+                    <input type="submit" value="Modify Health">
+                    <input type="text" value="{{name}}" name="name" id="{{name}}" style="display:none;">
+                    <input type="number" name="modify_amount" id="modify_amount" style="width: 50px;" required> 
+                    <!-- Maybe place Army targeting here -->
+                </form>
+            </td>   
+                {% for sub_key, sub_value in units.army_units[name]|dictsort %}
+                    {% if 'Button' in units.basis[sub_key] and units.basis[sub_key]['Button'] == 'Display' %}
+                        <td>
+                            <button onclick="popup('{{units.display(units.army_units[name], sub_key)}}')">{{sub_key}}</button>
+                        </td>
+                
+                    {% elif units.basis[sub_key]['TYPE'] == 'Object' %}
+                    
+                        <!-- Objects-->
+                        {% if units.basis[sub_key]['Button'] == 'Callable' %}
+                            <td>
+                                <form method="post" action="{{ url_for(request.endpoint, **request.view_args) }}">
+                                    <input type="text" value="{{sub_key}}" id="CallObject" name="CallObject" style="display: none;">
+                                    <input type="text" value="{{name}}" id="name" name="name" style="display: none;">
+                                    <input type="submit" value="CALL {{sub_key}}" name="Callable">
+                                    <input type ="text" value="" id="TARGET" name="TARGET">
+                                </form>
+                            </td>
+                        {% endif %}
+                        <td>
+                            <button onclick="popup('{{units.display(units.army_units[name], sub_key)}}')">{{sub_key}}</button>
+                        </td>
+                    {% elif not units.basis[sub_key]['REQUIRED'] and sub_key != "CurrentHp" %}
+                        <td>{{sub_key}} : {{sub_value}}</td>
+                    {% endif %}
+                
+                {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>    
+
 
 <!-- In line scripts to manage simple javascript - probably should make it a seperate file-->
 <script>

@@ -1,0 +1,16 @@
+unit0:
+    Gear:['']
+    Name:drow1
+    MaxHp:15
+    ArmyKills:
+        Bonus:3
+        BaseDamageMultiplier:2
+        Name:Killer
+unit1:
+        Gear:['']
+        Name:drow2
+        MaxHp:15
+        ArmyKills:
+            Bonus:5
+            BaseDamageMultiplier:5
+            Name:Slayer

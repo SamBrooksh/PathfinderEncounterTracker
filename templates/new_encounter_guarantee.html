@@ -27,6 +27,7 @@
                 id="{{basis[key]['KEY']}}" name="{{basis[key]['KEY']}}">
                 {% elif basis[key]['TYPE'] | is_enum %}
                 <select id="{{basis[key]['TYPE'].__name__}}" name="{{basis[key]['TYPE'].__name__}}">
+                <option value="">None</option>
                 {% for choice in basis[key]['TYPE'] %}
                     <option value="{{choice.name}}">{{choice.name}}</option>
                 {% endfor %}
@@ -60,6 +61,7 @@
                         id="{{basis[key]['KEY']}}-{{basis[key][sub_key]['KEY']}}" name="{{basis[key]['KEY']}}-{{basis[key][sub_key]['KEY']}}">
                         {% elif basis[key][sub_key]['TYPE'] | is_enum %}
                             <select id="{{basis[key]['KEY']}}-{{basis[key][sub_key]['TYPE'].__name__}}" name="{{basis[key]['KEY']}}-{{basis[key][sub_key]['TYPE'].__name__}}">
+                                <option value="">None</option>
                             {% for choice in basis[key][sub_key]['TYPE'] %}
                                 <option value="{{choice.name}}">{{choice.name}}</option>
                             {% endfor %}
@@ -76,6 +78,7 @@
                                 id="{{basis[key]['KEY']}}-{{basis[key][sub_key]['KEY']}}-{{basis[key][sub_key][tertiary]['KEY']}}" name="{{basis[key]['KEY']}}-{{basis[key][sub_key]['KEY']}}-{{basis[key][sub_key][tertiary]['KEY']}}">
                                 {% elif basis[key][sub_key][tertiary]['TYPE'] | is_enum %}
                                     <select id="{{basis[key]['KEY']}}-{{basis[key][sub_key]['KEY']}}-{{basis[key][sub_key][tertiary]['KEY'].__name__}}" name="{{basis[key]['KEY']}}-{{basis[key][sub_key]['KEY']}}-{{basis[key][sub_key][tertiary]['KEY'].__name__}}">
+                                        <option value="">None</option>
                                     {% for choice in basis[key][sub_key][tertiary]['TYPE'] %}
                                         <option value="{{choice.name}}">{{choice.name}}</option>
                                     {% endfor %}

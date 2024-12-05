@@ -37,22 +37,31 @@ def file(file_name):
             units.save(units.basis, file_name+'.sfs')
         return render_template("units.html", units = units)
     elif 'Callable' in request.form:
-        print('Callable')
-        unit_name = request.form['name']
-        object_name = request.form['CallObject']
-        #print(unit_name, object_name)
-        result = units.units[unit_name][object_name]()
-        print(result)
+        if 'TARGET' not in request.form:
+            unit_name = request.form['name']
+            object_name = request.form['CallObject']
+            #print(unit_name, object_name)
+            result = units.units[unit_name][object_name]()
+        else:
+            army_name = request.form['name']
+            target = request.form['TARGET']
+            if target not in units.army_units:
+                result = "TARGET NOT ARMY_UNIT"
+            else:
+                units.attack(army_name, target)
+                result = units.army_breakdown[-1]
+                #result = units.army_units[army_name]['ArmyKills'](units.army_units[target]['ArmyKills'])
+
         return render_template("result.html", units = units, result = result)
 
-@app.route('/new_encounter', methods=['POST', 'GET'])
+'''@app.route('/new_encounter', methods=['POST', 'GET'])
 def new_encounter():
     if request.method == 'GET':
         return render_template('new_encounter.html', basis=load_keys())
     else:
         print("Create and Save")
         print(request.form['value'])
-        return render_template('new_encounter.html', basis=load_keys())
+        return render_template('new_encounter.html', basis=load_keys())'''
 
 @app.route('/')
 def index():
@@ -97,6 +106,21 @@ def build_units(validating:dict)->dict:
 
     return units
 
+def flatten_dict(d):
+    """Flattens a nested dictionary into a list of values."""
+    flat_list = []
+    for _, v in d.items():
+        if isinstance(v, dict):
+            flat_list.extend(flatten_dict(v))
+        else:
+            flat_list.append(v)
+    return flat_list
+
+def check_values(d):
+    """Checks if there are any values in the dictionary."""
+    flattened = flatten_dict(d)
+    return any(flattened)
+
 def validate_dict(basis: dict, validating: dict)->tuple[bool, str]:
     #Returns any errors, and if it is successful
     removes = []
@@ -104,14 +128,13 @@ def validate_dict(basis: dict, validating: dict)->tuple[bool, str]:
         if '[]' in key:
             removes.append(key)
     to_save = validating.pop('file')
-    #if os.path.exists(to_save+".sfs"):
-    #    return False, "ENCOUNTER EXISTS ALREADY"
+    if os.path.exists(to_save+".sfs"):
+        return False, "ENCOUNTER EXISTS ALREADY"
     for i in removes:
         validating.pop(i)
     #READY TO CHECK
     errors = []
     built = build_units(validating)
-    pprint(built)
     with open(to_save+".sfs", 'w') as fout:
         spacing = 0
         for key in built:
@@ -120,13 +143,13 @@ def validate_dict(basis: dict, validating: dict)->tuple[bool, str]:
             for sub_key in built[key]:
                 try:
                     if isinstance(built[key][sub_key], dict):
-                        print(f"{any(built[key][sub_key].values())}: {sub_key} : {built[key][sub_key]}")
-                        if any(built[key][sub_key].values()):
+                        #print(f"{check_values(built[key][sub_key])}: {sub_key} : {built[key][sub_key]}")
+                        if check_values(built[key][sub_key]):
                             print(f"{" "*spacing}{sub_key}:", file=fout)
                             spacing += 4
                             for sub_sub_key in built[key][sub_key]:
                                 if isinstance(built[key][sub_key][sub_sub_key], dict):
-                                    if any(built[key][sub_key][sub_sub_key].values()):
+                                    if check_values(built[key][sub_key][sub_sub_key]):
                                         print(f"{" "*spacing}{sub_sub_key}:", file=fout)
                                         spacing += 4
                                         for tertiary in built[key][sub_key][sub_sub_key]:
@@ -138,21 +161,26 @@ def validate_dict(basis: dict, validating: dict)->tuple[bool, str]:
                                     print(f"{" "*spacing}{sub_sub_key}:{built[key][sub_key][sub_sub_key]}", file=fout)
                             spacing -= 4
                         else:
-                            print(f"Skipped {sub_key}")
+                            pass
+                            #print(f"Skipped {sub_key}")
                     else:
                         if built[key][sub_key] != "":
                             print(f"{" "*spacing}{sub_key}:{built[key][sub_key]}", file=fout)
                 except:
                     print("CRASH")
-                    pass
+                    False, "CRASH"
     try:
         result = build_tree(to_save+".sfs")
+        units = UnitTracker(result)
+        units.save(basis, to_save+".sfs")
+        return True, "Successfully Saved" 
     except Exception as e:
-        print(e)
+        errors = e
+        os.remove(to_save+".sfs")
     return False, str(errors)
 
-@app.route('/testing', methods=['GET', 'POST'])
-def test():
+@app.route('/new_encounter', methods=['GET', 'POST'])
+def new_encounter():
     basis = load_keys()
     if request.method == 'POST':
         error = "TEST ERROR"
@@ -170,11 +198,7 @@ def test():
                 units[key] = request.form[key]
         # Data Validate
         valid, error = validate_dict(basis, deepcopy(units))
-
-
         return render_template('new_encounter_guarantee.html', basis=basis, data=units, error=error)
-
-        #print(request.form.getlist('Gear[]'))
     return render_template('new_encounter_guarantee.html', basis=basis, data=None, error="")
 
 if __name__ == '__main__':

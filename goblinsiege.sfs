@@ -1,0 +1,188 @@
+unit0:
+    Gear: ['']
+    CR: 7
+    Name: Goblin Army 1
+    Alliance: Friendly
+    MaxHp: 950
+    CurrentHp: 669
+    ArmyKills:
+        Bonus: 7
+        BaseDamageMultiplier: 1
+        Name: Goblin Swarm
+    Stats:
+        STR: 10
+        INT: 10
+        WIS: 10
+        DEX: 10
+        CHA: 10
+        CON: 10
+        Reflex: 0
+        Fortitude: 0
+        Will: 0
+    AC: 10
+    Resistances:
+        Bludgeoning: 0
+        Piercing: 0
+        Slashing: 0
+        Magic: 0
+        Fire: 0
+        Cold: 0
+        Electricity: 0
+        Acid: 0
+unit1:
+    Gear: ['']
+    CR: 7
+    Name: Goblin Army 2
+    Alliance: Friendly
+    MaxHp: 1050
+    CurrentHp: 321
+    ArmyKills:
+        Bonus: 7
+        BaseDamageMultiplier: 1
+        Name: Goblin Swarm
+    Stats:
+        STR: 10
+        INT: 10
+        WIS: 10
+        DEX: 10
+        CHA: 10
+        CON: 10
+        Reflex: 0
+        Fortitude: 0
+        Will: 0
+    AC: 10
+    Resistances:
+        Bludgeoning: 0
+        Piercing: 0
+        Slashing: 0
+        Magic: 0
+        Fire: 0
+        Cold: 0
+        Electricity: 0
+        Acid: 0
+unit2:
+    Gear: ['']
+    CR: 7
+    Name: Goblin Army 3
+    Alliance: Friendly
+    MaxHp: 1050
+    CurrentHp: 658
+    ArmyKills:
+        Bonus: 7
+        BaseDamageMultiplier: 1
+        Name: Goblin Swarm
+    Stats:
+        STR: 10
+        INT: 10
+        WIS: 10
+        DEX: 10
+        CHA: 10
+        CON: 10
+        Reflex: 0
+        Fortitude: 0
+        Will: 0
+    AC: 10
+    Resistances:
+        Bludgeoning: 0
+        Piercing: 0
+        Slashing: 0
+        Magic: 0
+        Fire: 0
+        Cold: 0
+        Electricity: 0
+        Acid: 0
+unit3:
+    Gear: ['']
+    CR: 7
+    Name: Goblin Reserves
+    Alliance: Friendly
+    MaxHp: 600
+    CurrentHp: 423
+    ArmyKills:
+        Bonus: 7
+        BaseDamageMultiplier: 1
+        Name: Goblin Swarm
+    Stats:
+        STR: 10
+        INT: 10
+        WIS: 10
+        DEX: 10
+        CHA: 10
+        CON: 10
+        Reflex: 0
+        Fortitude: 0
+        Will: 0
+    AC: 10
+    Resistances:
+        Bludgeoning: 0
+        Piercing: 0
+        Slashing: 0
+        Magic: 0
+        Fire: 0
+        Cold: 0
+        Electricity: 0
+        Acid: 0
+unit4:
+    Gear: ['']
+    CR: 13
+    Name: Main Drow
+    Alliance: Hostile
+    MaxHp: 500
+    CurrentHp: 336
+    ArmyKills:
+        Bonus: 13
+        BaseDamageMultiplier: 4
+        Name: Drow Attack
+    Stats:
+        STR: 10
+        INT: 10
+        WIS: 10
+        DEX: 10
+        CHA: 10
+        CON: 10
+        Reflex: 0
+        Fortitude: 0
+        Will: 0
+    AC: 10
+    Resistances:
+        Bludgeoning: 0
+        Piercing: 0
+        Slashing: 0
+        Magic: 0
+        Fire: 0
+        Cold: 0
+        Electricity: 0
+        Acid: 0
+unit5:
+    Gear: ['']
+    CR: 14
+    Name: Devils
+    Alliance: Hostile
+    MaxHp: 50
+    Notes: Can Replenish as well
+    ArmyKills:
+        Bonus: 14
+        BaseDamageMultiplier: 4
+        Name: Devil's Ploy
+    Stats:
+        STR: 10
+        INT: 10
+        WIS: 10
+        DEX: 10
+        CHA: 10
+        CON: 10
+        Reflex: 0
+        Fortitude: 0
+        Will: 0
+    CurrentHp: 50
+    AC: 10
+    Resistances:
+        Bludgeoning: 0
+        Piercing: 0
+        Slashing: 0
+        Magic: 0
+        Fire: 0
+        Cold: 0
+        Electricity: 0
+        Acid: 0
+

@@ -402,6 +402,7 @@ class UnitTracker:
                 self.army_units[unit] = start_dict[unit]
             else:
                 print(f"INVALID UNIT! {start_dict[unit]}")
+                raise KeyError(f"{start_dict[unit]['Name']} IS not valid - missing Attack/ArmyKills Tag")
         self.basis = basis
 
     def __str__(self) -> str:
@@ -548,7 +549,7 @@ class UnitTracker:
         if source in self.units and target in self.units:
             self.units[target] = self.attack_targets(self.units[source], self.units[target])
         elif source in self.army_units and target in self.army_units:
-            self.units[target] = self.attack_targets(self.army_units[source], self.army_units[target])
+            self.army_units[target] = self.attack_targets(self.army_units[source], self.army_units[target])
 
     def get_damage_type(self, base: str)->Enum:
         print(base)

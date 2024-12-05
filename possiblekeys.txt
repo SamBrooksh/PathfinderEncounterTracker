@@ -29,7 +29,7 @@ Attack: Object : Callable :EITHER :Button - Callable
     Description: String : Const : Button - Display
 AC: Int : Const : GENERATE - 10
 
-ArmyKills: Object : Callable - None :EITHER  
+ArmyKills: Object : Callable - String :EITHER  : Button - Callable
     Bonus: Int : Const : GENERATE - 0
     BaseDamageMultiplier: Int : Const : GENERATE - 1
     Name: String : Const : REQUIRED
