@@ -42,6 +42,10 @@ def file(file_name):
             object_name = request.form['CallObject']
             #print(unit_name, object_name)
             result = units.units[unit_name][object_name]()
+            if ".sfs" in file_name:
+                units.save(units.basis, file_name)
+            else:
+                units.save(units.basis, file_name+'.sfs')
         else:
             army_name = request.form['name']
             target = request.form['TARGET']
@@ -50,6 +54,10 @@ def file(file_name):
             else:
                 units.attack(army_name, target)
                 result = units.army_breakdown[-1]
+                if ".sfs" in file_name:
+                    units.save(units.basis, file_name)
+                else:
+                    units.save(units.basis, file_name+'.sfs')
                 #result = units.army_units[army_name]['ArmyKills'](units.army_units[target]['ArmyKills'])
 
         return render_template("result.html", units = units, result = result)

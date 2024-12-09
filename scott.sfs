@@ -20,7 +20,7 @@ unit:
         Reflex: 0
         Fortitude: 0
         Will: 0
-    CurrentHp: 6
+    CurrentHp: -26
     AC: 10
     Resistances:
         Bludgeoning: 0

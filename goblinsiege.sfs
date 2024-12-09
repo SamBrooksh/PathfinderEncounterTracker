@@ -35,7 +35,7 @@ unit1:
     Name: Goblin Army 2
     Alliance: Friendly
     MaxHp: 1050
-    CurrentHp: 321
+    CurrentHp: 79
     ArmyKills:
         Bonus: 7
         BaseDamageMultiplier: 1
@@ -128,7 +128,7 @@ unit4:
     Name: Main Drow
     Alliance: Hostile
     MaxHp: 500
-    CurrentHp: 336
+    CurrentHp: 276
     ArmyKills:
         Bonus: 13
         BaseDamageMultiplier: 4

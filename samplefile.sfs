@@ -45,7 +45,7 @@ drow1:
         Will: 10
         Reflex: 10
     MaxHp: 100
-    CurrentHp: 88
+    CurrentHp: 69
     AC: 15
     Attack:
         Weapon: Sword
