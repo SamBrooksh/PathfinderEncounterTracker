@@ -2,3 +2,12 @@
     display: block;
     vertical-align: top;
 }
+
+#table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+input {
+    max-width: 135px;
+}
