@@ -1,0 +1,480 @@
+unit0:
+    Gear: ['']
+    CR: 18
+    Name: Archmage
+    Alliance: Hostile
+    Stats:
+        STR: 10
+        INT: 28
+        WIS: 18
+        DEX: 16
+        CHA: 10
+        CON: 14
+        Reflex: 9
+        Fortitude: 5
+        Will: 13
+    MaxHp: 125
+    CurrentHp: 120
+    Attack:
+        Weapon: Quarterstaff
+        MeleeRanged: Melee
+        BaseType: Bludgeoning
+        DamageRoll:
+            Value:1d6+3
+        AttackBonus: 0
+    AC: 27
+    Resistances:
+        Bludgeoning: 5
+        Piercing: 5
+        Slashing: 5
+        Magic: 5
+        Fire: 5
+        Cold: 5
+        Electricity: 5
+        Acid: 5
+unit1:
+    Gear: ['']
+    CR: 23
+    Name: Matron
+    Alliance: Hostile
+    Stats:
+        STR: 18
+        INT: 16
+        WIS: 26
+        DEX: 12
+        CHA: 18
+        CON: 18
+        Reflex: 13
+        Fortitude: 15
+        Will: 25
+    MaxHp: 332
+    CurrentHp: 332
+    Attack:
+        Weapon: +5 Bleeding Heavy Mace (AC +1)
+        MeleeRanged: Melee
+        BaseType: Bludgeoning
+        AttackBonus: 27
+        DamageRoll:
+            Value:1d8+5+2d6
+    AC: 37
+    Resistances:
+        Bludgeoning: 15
+        Piercing: 15
+        Slashing: 15
+        Fire: 20
+        Cold: 20
+        Electricity: 20
+        Acid: 20
+        Magic: 0
+unit2:
+    Gear: ['']
+    CR: 19
+    Name: High Priestess
+    Alliance: Hostile
+    Stats:
+        STR: 18
+        INT: 13
+        WIS: 25
+        DEX: 15
+        CHA: 16
+        CON: 20
+        Reflex: 11
+        Fortitude: 14
+        Will: 20
+    MaxHp: 285
+    CurrentHp: 238
+    Attack:
+        Weapon: Heavy Mace
+        MeleeRanged: Melee
+        BaseType: Bludgeoning
+        AttackBonus: 22
+        DamageRoll:
+            Value:1d8+10
+    AC: 32
+    Resistances:
+        Bludgeoning: 10
+        Piercing: 10
+        Slashing: 10
+        Fire: 5
+        Cold: 5
+        Electricity: 5
+        Acid: 5
+        Magic: 0
+unit3:
+    Gear: ['']
+    CR: 13
+    Name: Lower Cleric
+    Alliance: Hostile
+    Stats:
+        STR: 16
+        INT: 12
+        WIS: 22
+        DEX: 14
+        CHA: 16
+        CON: 20
+        Reflex: 7
+        Fortitude: 10
+        Will: 18
+    MaxHp: 155
+    CurrentHp: 53
+    Attack:
+        Weapon: Heavy Mace
+        MeleeRanged: Melee
+        BaseType: Bludgeoning
+        AttackBonus: 17
+        DamageRoll:
+            Value:1d8+8
+    AC: 28
+    Resistances:
+        Bludgeoning: 5
+        Piercing: 5
+        Slashing: 5
+        Magic: 0
+        Fire: 0
+        Cold: 0
+        Electricity: 0
+        Acid: 0
+unit4:
+    Gear: ['']
+    CR: 14
+    Name: Assassin
+    Alliance: Hostile
+    Stats:
+        STR: 16
+        INT: 20
+        WIS: 12
+        DEX: 28
+        CHA: 10
+        CON: 12
+        Reflex: 18
+        Fortitude: 10
+        Will: 10
+    MaxHp: 165
+    CurrentHp: 44
+    Attack:
+        Weapon: Assassin Blade
+        MeleeRanged: Melee
+        BaseType: Slashing
+        AttackBonus: 25
+        DamageRoll:
+            Value:1d6+5
+    AC: 30
+    Resistances:
+        Bludgeoning: 5
+        Fire: 10
+        Cold: 10
+        Electricity: 10
+        Acid: 10
+        Piercing: 0
+        Slashing: 0
+        Magic: 0
+unit5:
+    Gear: ['Rapier+3', 'Shield + 3', 'HandCrossbow', 'Drow Poison', 'Chainmail +3', '20 Bolts']
+    CR: 10
+    Name: SoldierA
+    Alliance: Hostile
+    Stats:
+        STR: 20
+        INT: 10
+        WIS: 10
+        DEX: 18
+        CHA: 12
+        CON: 18
+        Reflex: 11
+        Fortitude: 14
+        Will: 9
+    MaxHp: 125
+    CurrentHp: 34
+    Attack:
+        Weapon: Rapier + 3
+        MeleeRanged: Melee
+        BaseType: Piercing
+        AttackBonus: 19
+        DamageRoll:
+            Value:1d8+7
+    AC: 31
+    Resistances:
+        Fire: 5
+        Cold: 5
+        Electricity: 5
+        Acid: 5
+        Bludgeoning: 0
+        Piercing: 0
+        Slashing: 0
+        Magic: 0
+unit6:
+    Gear: ['']
+    CR: 11
+    Name: Ilithid
+    Alliance: Hostile
+    Stats:
+        STR: 10
+        INT: 24
+        WIS: 18
+        DEX: 16
+        CHA: 8
+        CON: 12
+        Reflex: 7
+        Fortitude: 8
+        Will: 11
+    MaxHp: 85
+    CurrentHp: 53
+    Notes: Mind blast every 1d4 rounds
+    Attack:
+        Weapon: Tentacles
+        MeleeRanged: Melee
+        BaseType: Piercing
+        AttackBonus: 15
+        DamageRoll:
+            Value:1d6+3
+    AC: 21
+    Resistances:
+        Magic: 5
+        Fire: 10
+        Cold: 10
+        Electricity: 10
+        Acid: 10
+        Bludgeoning: 0
+        Piercing: 0
+        Slashing: 0
+unit7:
+    Gear: ['']
+    CR: 10
+    Name: DuegarA
+    Alliance: Hostile
+    Stats:
+        STR: 26
+        INT: 10
+        WIS: 13
+        DEX: 15
+        CHA: 7
+        CON: 18
+        Reflex: 14
+        Fortitude: 15
+        Will: 9
+    MaxHp: 135
+    CurrentHp: 71
+    Attack:
+        Weapon: Duegar Axe
+        MeleeRanged: Melee
+        BaseType: Slashing
+        AttackBonus: 20
+        DamageRoll:
+            Value:1d10+8
+    AC: 26
+    Resistances:
+        Cold: 15
+        Bludgeoning: 0
+        Piercing: 0
+        Slashing: 0
+        Magic: 0
+        Fire: 0
+        Electricity: 0
+        Acid: 0
+unit8:
+    Gear: ['']
+    CR: 12
+    Name: Swordsman
+    Alliance: Hostile
+    Stats:
+        STR: 26
+        INT: 12
+        WIS: 12
+        DEX: 18
+        CHA: 11
+        CON: 18
+        Reflex: 11
+        Fortitude: 17
+        Will: 11
+    MaxHp: 163
+    CurrentHp: 143
+    Attack:
+        Weapon: Greatsword
+        MeleeRanged: Melee
+        BaseType: Slashing
+        AttackBonus: 24
+        DamageRoll:
+            Value:2d6+12
+        Description: Improved Vital Strike
+    AC: 35
+    Resistances:
+        Bludgeoning: 20
+        Piercing: 0
+        Slashing: 0
+        Magic: 0
+        Fire: 0
+        Cold: 0
+        Electricity: 0
+        Acid: 0
+unit9:
+    Gear: ['']
+    CR: 14
+    Name: Antipaladin
+    Alliance: Hostile
+    Stats:
+        STR: 28
+        INT: 13
+        WIS: 18
+        DEX: 15
+        CHA: 16
+        CON: 18
+        Reflex: 9
+        Fortitude: 19
+        Will: 15
+    MaxHp: 202
+    CurrentHp: 195
+    Attack:
+        Weapon: Greatsword+6
+        MeleeRanged: Melee
+        BaseType: Slashing
+        AttackBonus: 28
+        DamageRoll:
+            Value:2d6+15
+    AC: 36
+    Resistances:
+        Bludgeoning: 5
+        Piercing: 5
+        Slashing: 5
+        Magic: 5
+        Fire: 10
+        Cold: 10
+        Electricity: 10
+        Acid: 10
+unit10:
+    Gear: ['']
+    CR: 12
+    Name: Swordsman
+    Alliance: Hostile
+    Stats:
+        STR: 26
+        INT: 12
+        WIS: 12
+        DEX: 18
+        CHA: 11
+        CON: 18
+        Reflex: 11
+        Fortitude: 17
+        Will: 11
+    MaxHp: 163
+    CurrentHp: 133
+    Attack:
+        Weapon: Greatsword
+        MeleeRanged: Melee
+        BaseType: Slashing
+        AttackBonus: 24
+        DamageRoll:
+            Value:2d6+12
+        Description: Improved Vital Strike
+    AC: 35
+    Resistances:
+        Bludgeoning: 20
+        Piercing: 0
+        Slashing: 0
+        Magic: 0
+        Fire: 0
+        Cold: 0
+        Electricity: 0
+        Acid: 0
+unit11:
+    Gear: ['Rapier+3', 'Shield + 3', 'HandCrossbow', 'Drow Poison', 'Chainmail +3', '20 Bolts']
+    CR: 10
+    Name: SoldierB
+    Alliance: Hostile
+    Stats:
+        STR: 20
+        INT: 10
+        WIS: 10
+        DEX: 18
+        CHA: 12
+        CON: 18
+        Reflex: 11
+        Fortitude: 14
+        Will: 9
+    MaxHp: 125
+    CurrentHp: 74
+    Attack:
+        Weapon: Rapier + 3
+        MeleeRanged: Melee
+        BaseType: Piercing
+        AttackBonus: 19
+        DamageRoll:
+            Value:1d8+7
+    AC: 31
+    Resistances:
+        Fire: 5
+        Cold: 5
+        Electricity: 5
+        Acid: 5
+        Bludgeoning: 0
+        Piercing: 0
+        Slashing: 0
+        Magic: 0
+unit12:
+    Gear: ['Rapier+3', 'Shield + 3', 'HandCrossbow', 'Drow Poison', 'Chainmail +3', '20 Bolts']
+    CR: 10
+    Name: SoldierC
+    Alliance: Hostile
+    Stats:
+        STR: 20
+        INT: 10
+        WIS: 10
+        DEX: 18
+        CHA: 12
+        CON: 18
+        Reflex: 11
+        Fortitude: 14
+        Will: 9
+    MaxHp: 125
+    CurrentHp: -18
+    Attack:
+        Weapon: Rapier + 3
+        MeleeRanged: Melee
+        BaseType: Piercing
+        AttackBonus: 19
+        DamageRoll:
+            Value:1d8+7
+    AC: 31
+    Resistances:
+        Fire: 5
+        Cold: 5
+        Electricity: 5
+        Acid: 5
+        Bludgeoning: 0
+        Piercing: 0
+        Slashing: 0
+        Magic: 0
+unit13:
+    Gear: ['Rapier+3', 'Shield + 3', 'HandCrossbow', 'Drow Poison', 'Chainmail +3', '20 Bolts']
+    CR: 10
+    Name: SoldierD
+    Alliance: Hostile
+    Stats:
+        STR: 20
+        INT: 10
+        WIS: 10
+        DEX: 18
+        CHA: 12
+        CON: 18
+        Reflex: 11
+        Fortitude: 14
+        Will: 9
+    MaxHp: 125
+    CurrentHp: 101
+    Attack:
+        Weapon: Rapier + 3
+        MeleeRanged: Melee
+        BaseType: Piercing
+        AttackBonus: 19
+        DamageRoll:
+            Value:1d8+7
+    AC: 31
+    Resistances:
+        Fire: 5
+        Cold: 5
+        Electricity: 5
+        Acid: 5
+        Bludgeoning: 0
+        Piercing: 0
+        Slashing: 0
+        Magic: 0
+
